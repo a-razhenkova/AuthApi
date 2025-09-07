@@ -1,0 +1,6 @@
+@host = https://localhost:44301
+
+HEAD {{host}}/api/v1/health/heartbeat
+Accept: */*
+
+###
