@@ -1,0 +1,1733 @@
+{
+  "openapi": "3.0.4",
+  "info": {
+    "title": "Authentication API",
+    "description": "<p>\r\n    The API provides secure identity and access management. It supports <strong>user</strong> and <strong>client</strong> registration, update, deletion and retrieval with paginated report.\r\n</p>\r\n<ul>\r\n    <li>Use <code>POST /api/v1/tokens</code> for basic authorization to obtain <strong>access token</strong> for a <strong>client</strong>.</li>\r\n    </br>\r\n    <li>Use <code>POST /api/v2/tokens</code> for bearer authorization to obtain <strong>access and refresh token</strong> for an <strong>user</strong>. Use <code>PUT /api/v2/tokens</code> to refresh the <strong>access token</strong>.</li>\r\n    </br>\r\n    <li>Use <code>POST /api/v1/mfa/otp</code> to obtain <strong>OTP</strong> and then use it with <code>POST /api/v3/tokens</code> to obtain <strong>access and refresh token</strong> for a <strong>user</strong>.</li>\r\n    </br>\r\n    <li>Use <code>POST /api/v1/tokens/validate</code> to validate <strong>access token</strong> for both clients and users.</li>\r\n</ul>",
+    "contact": {
+      "name": "Aleksandrina Razhenkova",
+      "url": "https://github.com/a-razhenkova",
+      "email": "a.razhenkova@gmail.com"
+    },
+    "version": "1.0.0.0"
+  },
+  "paths": {
+    "/api/v1/clients": {
+      "get": {
+        "tags": [
+          "Clients"
+        ],
+        "summary": "Retrieves list of clients.",
+        "operationId": "SearchClientAsync_V1",
+        "parameters": [
+          {
+            "name": "Key",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Name",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Status",
+            "in": "query",
+            "schema": {
+              "$ref": "#/components/schemas/ClientStatuses"
+            }
+          },
+          {
+            "name": "CanNotifyParty",
+            "in": "query",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "RequestedPageNumber",
+            "in": "query",
+            "description": "The page number to retrieve from the paginated results.",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "ItemsPerPage",
+            "in": "query",
+            "description": "The number of items to include per page in the paginated results.",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "X-Correlation-ID",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExceptionModel_V1"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ClientModelPaginatedReport_V1"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Clients"
+        ],
+        "summary": "Registers a new client.",
+        "operationId": "RegisterClientAsync_V1",
+        "parameters": [
+          {
+            "name": "X-Correlation-ID",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "The model containing client registration details.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ClientRegistrationModel_V1"
+              }
+            }
+          }
+        },
+        "responses": {
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExceptionModel_V1"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StringSimpleResponseModel_V1"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/clients/{key}": {
+      "get": {
+        "tags": [
+          "Clients"
+        ],
+        "summary": "Retrieves a client.",
+        "operationId": "LoadClientAsync_V1",
+        "parameters": [
+          {
+            "name": "key",
+            "in": "path",
+            "description": "The key of the client to be retrieved.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "X-Correlation-ID",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExceptionModel_V1"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ClientModel_V1"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Clients"
+        ],
+        "summary": "Updates an existing client's details.",
+        "operationId": "UpdateClientAsync_V1",
+        "parameters": [
+          {
+            "name": "key",
+            "in": "path",
+            "description": "The key of the client to be updated.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "X-Correlation-ID",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "The model containing the updated client details.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ClientUpdateModel_V1"
+              }
+            }
+          }
+        },
+        "responses": {
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExceptionModel_V1"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Clients"
+        ],
+        "summary": "Deletes a client.",
+        "operationId": "DeleteClientAsync_V1",
+        "parameters": [
+          {
+            "name": "key",
+            "in": "path",
+            "description": "The key of the client to be deleted.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "X-Correlation-ID",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExceptionModel_V1"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/v1/clients/{key}/secret": {
+      "get": {
+        "tags": [
+          "Clients"
+        ],
+        "summary": "Retrieves the secret of a client.",
+        "operationId": "LoadClientSecretAsync_V1",
+        "parameters": [
+          {
+            "name": "key",
+            "in": "path",
+            "description": "The key of the client whose secret is to be retrieved.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "X-Correlation-ID",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExceptionModel_V1"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StringSimpleResponseModel_V1"
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "Clients"
+        ],
+        "summary": "Refreshes the secret for a client.",
+        "operationId": "RefreshClientSecretAsync_V1",
+        "parameters": [
+          {
+            "name": "key",
+            "in": "path",
+            "description": "The key of the client whose secret is to be refreshed.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "X-Correlation-ID",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExceptionModel_V1"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/health/heartbeat": {
+      "head": {
+        "tags": [
+          "Health"
+        ],
+        "summary": "Provides a simple heartbeat endpoint to verify the service is running.",
+        "operationId": "HeartbeatAsync_V1",
+        "parameters": [
+          {
+            "name": "X-Correlation-ID",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExceptionModel_V1"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/v1/health": {
+      "get": {
+        "tags": [
+          "Health"
+        ],
+        "summary": "Retrieves information about the machine and build.",
+        "operationId": "LoadDeployInfo_V1",
+        "parameters": [
+          {
+            "name": "X-Correlation-ID",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExceptionModel_V1"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DeployInfoModel_V1"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/health/check": {
+      "get": {
+        "tags": [
+          "Health"
+        ],
+        "summary": "Checks the health of the application and its dependencies.",
+        "operationId": "CheckHealthAsync_V1",
+        "parameters": [
+          {
+            "name": "X-Correlation-ID",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExceptionModel_V1"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/mfa/otp": {
+      "post": {
+        "tags": [
+          "Mfa"
+        ],
+        "summary": "Generates a OTP for the user based on the provided credentials.",
+        "operationId": "CreateOtpAsync_V1",
+        "parameters": [
+          {
+            "name": "X-Correlation-ID",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "User authentication credentials.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserCredentialsModel_V1"
+              }
+            }
+          }
+        },
+        "responses": {
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExceptionModel_V1"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StringSimpleResponseModel_V1"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v3/tokens": {
+      "post": {
+        "tags": [
+          "Tokens"
+        ],
+        "summary": "Creates an access token for user by the provided OTP.",
+        "operationId": "CreateAccessTokenAsync_V3",
+        "parameters": [
+          {
+            "name": "X-Correlation-ID",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "The user's OTP and related two-factor authentication information.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserCredentialsModel_V2"
+              }
+            }
+          }
+        },
+        "responses": {
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExceptionModel_V1"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TokenModel_V1"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/tokens": {
+      "post": {
+        "tags": [
+          "Tokens"
+        ],
+        "summary": "Creates an access token for users.",
+        "operationId": "CreateAccessTokenAsync_V2",
+        "parameters": [
+          {
+            "name": "X-Correlation-ID",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "User authentication credentials.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserCredentialsModel_V1"
+              }
+            }
+          }
+        },
+        "responses": {
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExceptionModel_V1"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TokenModel_V2"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Tokens"
+        ],
+        "summary": "Refreshes the access token for a user.",
+        "operationId": "RefreshAccessTokenAsync_V2",
+        "parameters": [
+          {
+            "name": "X-Correlation-ID",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExceptionModel_V1"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TokenModel_V2"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/tokens": {
+      "post": {
+        "tags": [
+          "Tokens"
+        ],
+        "summary": "Creates an access token for clients.",
+        "operationId": "CreateAccessTokenAsync_V1",
+        "parameters": [
+          {
+            "name": "X-Correlation-ID",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExceptionModel_V1"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TokenModel_V1"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/tokens/validate": {
+      "post": {
+        "tags": [
+          "Tokens"
+        ],
+        "summary": "Validates the provided access token.",
+        "operationId": "ValidateAccessTokenAsync_V1",
+        "parameters": [
+          {
+            "name": "X-Correlation-ID",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExceptionModel_V1"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TokenValidationResultModel_V1"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/users": {
+      "get": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "Retrieves list of users.",
+        "operationId": "SearchUsersAsync_V1",
+        "parameters": [
+          {
+            "name": "X-Correlation-ID",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "Search parameters for filtering users.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserSearchParams"
+              }
+            }
+          }
+        },
+        "responses": {
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExceptionModel_V1"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserModelPaginatedReport_V1"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "Registers a new user.",
+        "operationId": "RegisterUserAsync_V1",
+        "parameters": [
+          {
+            "name": "X-Correlation-ID",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "The model containing user registration details.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserRegistrationModel_V1"
+              }
+            }
+          }
+        },
+        "responses": {
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExceptionModel_V1"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StringSimpleResponseModel_V1"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/users/{id}": {
+      "get": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "Retrieves a user.",
+        "operationId": "LoadUserAsync_V1",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "The external ID of the user to be retrieved.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "X-Correlation-ID",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExceptionModel_V1"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserModel_V1"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "Updates an existing user's details.",
+        "operationId": "UpdateUserAsync_V1",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "The external ID of the user to be updated.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "X-Correlation-ID",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "The model containing the updated user details.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserUpdateModel_V1"
+              }
+            }
+          }
+        },
+        "responses": {
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExceptionModel_V1"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "Deletes a user.",
+        "operationId": "DeleteUserAsync_V1",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "The external ID of the user to be deleted.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "X-Correlation-ID",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExceptionModel_V1"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/v1/users/{id}/password": {
+      "patch": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "Changes the password of an existing user.",
+        "operationId": "ChangeUserPasswordAsync_V1",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "The external ID of the user whose password is to be changed.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "X-Correlation-ID",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "The model containing the old and new passwords.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserPasswordModel_V1"
+              }
+            }
+          }
+        },
+        "responses": {
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExceptionModel_V1"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/v1/users/{id}/email": {
+      "patch": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "Changes the email address of an existing user.",
+        "operationId": "ChangeEmailAsync_V1",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "The external ID of the user whose email is to be changed.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "X-Correlation-ID",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "The model containing the new email and the user's password.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserEmailModel_V1"
+              }
+            }
+          }
+        },
+        "responses": {
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExceptionModel_V1"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "ClientModelPaginatedReport_V1": {
+        "required": [
+          "data",
+          "itemsPerPage",
+          "requestedPageNumber",
+          "totalPagesCount"
+        ],
+        "type": "object",
+        "properties": {
+          "requestedPageNumber": {
+            "type": "integer",
+            "description": "Requested page number for the report.",
+            "format": "int32"
+          },
+          "totalPagesCount": {
+            "type": "integer",
+            "description": "Total number of pages available in the report.",
+            "format": "int32"
+          },
+          "itemsPerPage": {
+            "type": "integer",
+            "description": "Number of items per page in the report.",
+            "format": "int32"
+          },
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ClientModel_V1"
+            },
+            "description": "Collection of data items for the current page.",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ClientModel_V1": {
+        "required": [
+          "key",
+          "name",
+          "right",
+          "status"
+        ],
+        "type": "object",
+        "properties": {
+          "key": {
+            "maxLength": 36,
+            "minLength": 0,
+            "type": "string",
+            "description": "Client key.",
+            "nullable": true,
+            "example": "dba1d25a-0062-49e7-b4f0-31224a69f9e4"
+          },
+          "name": {
+            "maxLength": 36,
+            "minLength": 0,
+            "pattern": "^[a-zA-Z][\\w .-]+[a-zA-Z]$",
+            "type": "string",
+            "description": "Name.",
+            "nullable": true,
+            "example": "Auth API"
+          },
+          "status": {
+            "$ref": "#/components/schemas/ClientStatusModel_V1"
+          },
+          "right": {
+            "$ref": "#/components/schemas/ClientRightModel_V1"
+          }
+        },
+        "additionalProperties": false
+      },
+      "ClientRegistrationModel_V1": {
+        "required": [
+          "isInternal",
+          "name",
+          "right"
+        ],
+        "type": "object",
+        "properties": {
+          "name": {
+            "maxLength": 36,
+            "minLength": 0,
+            "pattern": "^[a-zA-Z][\\w .-]+[a-zA-Z]$",
+            "type": "string",
+            "description": "Name.",
+            "nullable": true,
+            "example": "Auth API"
+          },
+          "right": {
+            "$ref": "#/components/schemas/ClientRightModel_V1"
+          },
+          "isInternal": {
+            "type": "boolean",
+            "description": "Flag indicating whether the client is for our system."
+          }
+        },
+        "additionalProperties": false
+      },
+      "ClientRightModel_V1": {
+        "required": [
+          "canNotifyParty"
+        ],
+        "type": "object",
+        "properties": {
+          "canNotifyParty": {
+            "type": "boolean",
+            "description": "Flag indicating whether the client has the right to notify a party."
+          }
+        },
+        "additionalProperties": false
+      },
+      "ClientStatusModel_V1": {
+        "required": [
+          "reason",
+          "value"
+        ],
+        "type": "object",
+        "properties": {
+          "value": {
+            "$ref": "#/components/schemas/UserStatuses"
+          },
+          "reason": {
+            "$ref": "#/components/schemas/UserStatusReasons"
+          },
+          "note": {
+            "pattern": "^[a-zA-Z\\d\\s\\-.!?()]*$",
+            "type": "string",
+            "description": "Additional note for the status.",
+            "nullable": true,
+            "example": "test"
+          }
+        },
+        "additionalProperties": false
+      },
+      "ClientStatuses": {
+        "enum": [
+          "ACTIVE",
+          "BLOCKED",
+          "DISABLED"
+        ],
+        "type": "string"
+      },
+      "ClientUpdateModel_V1": {
+        "required": [
+          "isInternal",
+          "name",
+          "right",
+          "status"
+        ],
+        "type": "object",
+        "properties": {
+          "name": {
+            "maxLength": 36,
+            "minLength": 0,
+            "pattern": "^[a-zA-Z][\\w .-]+[a-zA-Z]$",
+            "type": "string",
+            "description": "Name.",
+            "nullable": true,
+            "example": "Auth API"
+          },
+          "status": {
+            "$ref": "#/components/schemas/ClientStatusModel_V1"
+          },
+          "right": {
+            "$ref": "#/components/schemas/ClientRightModel_V1"
+          },
+          "isInternal": {
+            "type": "boolean",
+            "description": "Flag indicating whether the client is for our system."
+          }
+        },
+        "additionalProperties": false
+      },
+      "DeployInfoModel_V1": {
+        "required": [
+          "enviroment",
+          "serverTimestamp",
+          "version"
+        ],
+        "type": "object",
+        "properties": {
+          "version": {
+            "type": "string",
+            "description": "The application version.",
+            "nullable": true,
+            "example": "1.0.0.0"
+          },
+          "enviroment": {
+            "type": "string",
+            "description": "The environment.",
+            "nullable": true,
+            "example": "Development"
+          },
+          "serverTimestamp": {
+            "type": "string",
+            "description": "Server timestamp when the information was captured.",
+            "format": "date-time"
+          }
+        },
+        "additionalProperties": false
+      },
+      "ExceptionModel_V1": {
+        "required": [
+          "title"
+        ],
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "description": "Message.",
+            "nullable": true,
+            "example": "Internal Server Error"
+          },
+          "message": {
+            "type": "string",
+            "description": "Exception message.",
+            "nullable": true,
+            "example": "Invalid column name."
+          },
+          "details": {
+            "type": "string",
+            "description": "Exception details.",
+            "nullable": true,
+            "example": null
+          }
+        },
+        "additionalProperties": false
+      },
+      "StringSimpleResponseModel_V1": {
+        "required": [
+          "value"
+        ],
+        "type": "object",
+        "properties": {
+          "value": {
+            "type": "string",
+            "description": "Value.",
+            "nullable": true,
+            "example": "value"
+          }
+        },
+        "additionalProperties": false
+      },
+      "TokenModel_V1": {
+        "required": [
+          "accessToken"
+        ],
+        "type": "object",
+        "properties": {
+          "accessToken": {
+            "type": "string",
+            "description": "Access token.",
+            "nullable": true,
+            "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIyYTQ3YTRmYy0zZDkwLTRkZGItYTFlYy1hNjY0YzBhOGEyZjMiLCJ1c2VybmFtZSI6Iml2YW4uaXZhbm92IiwidXNlclJvbGUiOiJBZG1pbmlzdHJhdG9yIiwidXNlclN0YXR1cyI6IkFjdGl2ZSIsIm5iZiI6MTc0OTUwMTEzNCwiZXhwIjoxNzQ5NTczMTM0LCJpYXQiOjE3NDk1MDExMzQsImlzcyI6IkQxQ0NFNUE5RkQ5ODBCOTlCMkZDM0FGQjg4MThDQTZBRUNBNEU5RDFCRUI0N0FGMUM1OTc4REMyMEVCNTJCMEMiLCJhdWQiOiI4MTA0NTJhODA4YTIyMGM1MjQxNDUyYWJjMDQzNzZlNjZhMWJiNDE1NGU5NTRlYjQ3MjRjNGI4ZmY5Mzk5YmI2In0.f9jOUW8SjO9lFqEpFNzAAZnBgS4k6pqv8QUNx8y9aJg"
+          }
+        },
+        "additionalProperties": false
+      },
+      "TokenModel_V2": {
+        "required": [
+          "accessToken",
+          "refreshToken"
+        ],
+        "type": "object",
+        "properties": {
+          "accessToken": {
+            "type": "string",
+            "description": "Access token.",
+            "nullable": true,
+            "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIyYTQ3YTRmYy0zZDkwLTRkZGItYTFlYy1hNjY0YzBhOGEyZjMiLCJ1c2VybmFtZSI6Iml2YW4uaXZhbm92IiwidXNlclJvbGUiOiJBZG1pbmlzdHJhdG9yIiwidXNlclN0YXR1cyI6IkFjdGl2ZSIsIm5iZiI6MTc0OTUwMTEzNCwiZXhwIjoxNzQ5NTczMTM0LCJpYXQiOjE3NDk1MDExMzQsImlzcyI6IkQxQ0NFNUE5RkQ5ODBCOTlCMkZDM0FGQjg4MThDQTZBRUNBNEU5RDFCRUI0N0FGMUM1OTc4REMyMEVCNTJCMEMiLCJhdWQiOiI4MTA0NTJhODA4YTIyMGM1MjQxNDUyYWJjMDQzNzZlNjZhMWJiNDE1NGU5NTRlYjQ3MjRjNGI4ZmY5Mzk5YmI2In0.f9jOUW8SjO9lFqEpFNzAAZnBgS4k6pqv8QUNx8y9aJg"
+          },
+          "refreshToken": {
+            "type": "string",
+            "description": "Refresh token.",
+            "nullable": true,
+            "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIyYTQ3YTRmYy0zZDkwLTRkZGItYTFlYy1hNjY0YzBhOGEyZjMiLCJuYmYiOjE3NTU4Njk0MzAsImV4cCI6MTc1NTg3MDYzMCwiaWF0IjoxNzU1ODY5NDMwLCJpc3MiOiJEMUNDRTVBOUZEOTgwQjk5QjJGQzNBRkI4ODE4Q0E2QUVDQTRFOUQxQkVCNDdBRjFDNTk3OERDMjBFQjUyQjBDIiwiYXVkIjoiODEwNDUyYTgwOGEyMjBjNTI0MTQ1MmFiYzA0Mzc2ZTY2YTFiYjQxNTRlOTU0ZWI0NzI0YzRiOGZmOTM5OWJiNiJ9.jXHGFT0k0MYsqZNPGQcb9SVljMCuu1qE7BdfZuTwqO0"
+          }
+        },
+        "additionalProperties": false
+      },
+      "TokenValidationResultModel_V1": {
+        "required": [
+          "isValid"
+        ],
+        "type": "object",
+        "properties": {
+          "isValid": {
+            "type": "boolean",
+            "description": "Flag indicating whether the token is valid."
+          },
+          "exception": {
+            "type": "string",
+            "description": "Exception if token is invalid.",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "UserCredentialsModel_V1": {
+        "required": [
+          "password",
+          "username"
+        ],
+        "type": "object",
+        "properties": {
+          "username": {
+            "maxLength": 64,
+            "minLength": 6,
+            "pattern": "^[a-zA-Z][\\w.-]+[a-zA-Z]$",
+            "type": "string",
+            "description": "Username.",
+            "nullable": true,
+            "example": "ivan.ivanov"
+          },
+          "password": {
+            "maxLength": 128,
+            "minLength": 0,
+            "type": "string",
+            "description": "Password.",
+            "nullable": true,
+            "example": "m4A0?Edis66a"
+          }
+        },
+        "additionalProperties": false
+      },
+      "UserCredentialsModel_V2": {
+        "required": [
+          "oneTimePassword",
+          "userId"
+        ],
+        "type": "object",
+        "properties": {
+          "userId": {
+            "type": "string",
+            "description": "User external ID.",
+            "nullable": true,
+            "example": "2a47a4fc-3d90-4ddb-a1ec-a664c0a8a2f3"
+          },
+          "oneTimePassword": {
+            "maxLength": 6,
+            "minLength": 0,
+            "type": "string",
+            "description": "One time password (OTP).",
+            "nullable": true,
+            "example": "271967"
+          }
+        },
+        "additionalProperties": false
+      },
+      "UserEmailModel_V1": {
+        "required": [
+          "email",
+          "password"
+        ],
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "description": "Email.",
+            "format": "email",
+            "nullable": true,
+            "example": "ivan.ivanov@mail.com"
+          },
+          "password": {
+            "maxLength": 128,
+            "minLength": 0,
+            "type": "string",
+            "description": "Old password.",
+            "nullable": true,
+            "example": "m4A0?Edis66a"
+          }
+        },
+        "additionalProperties": false
+      },
+      "UserModelPaginatedReport_V1": {
+        "required": [
+          "data",
+          "itemsPerPage",
+          "requestedPageNumber",
+          "totalPagesCount"
+        ],
+        "type": "object",
+        "properties": {
+          "requestedPageNumber": {
+            "type": "integer",
+            "description": "Requested page number for the report.",
+            "format": "int32"
+          },
+          "totalPagesCount": {
+            "type": "integer",
+            "description": "Total number of pages available in the report.",
+            "format": "int32"
+          },
+          "itemsPerPage": {
+            "type": "integer",
+            "description": "Number of items per page in the report.",
+            "format": "int32"
+          },
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/UserModel_V1"
+            },
+            "description": "Collection of data items for the current page.",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "UserModel_V1": {
+        "required": [
+          "id",
+          "role",
+          "status",
+          "username"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "User external ID.",
+            "nullable": true,
+            "example": "2a47a4fc-3d90-4ddb-a1ec-a664c0a8a2f3"
+          },
+          "username": {
+            "maxLength": 64,
+            "minLength": 6,
+            "pattern": "^[a-zA-Z][\\w.-]+[a-zA-Z]$",
+            "type": "string",
+            "description": "Username.",
+            "nullable": true,
+            "example": "ivan.ivanov"
+          },
+          "role": {
+            "$ref": "#/components/schemas/UserRoles"
+          },
+          "status": {
+            "$ref": "#/components/schemas/UserStatusModel_V1"
+          },
+          "email": {
+            "type": "string",
+            "description": "Email.",
+            "format": "email",
+            "nullable": true,
+            "example": "ivan.ivanov@mail.com"
+          }
+        },
+        "additionalProperties": false
+      },
+      "UserPasswordModel_V1": {
+        "required": [
+          "newPassword",
+          "oldPassword"
+        ],
+        "type": "object",
+        "properties": {
+          "oldPassword": {
+            "maxLength": 128,
+            "minLength": 0,
+            "type": "string",
+            "description": "Old password.",
+            "nullable": true,
+            "example": "m4A0?Edis66a"
+          },
+          "newPassword": {
+            "maxLength": 128,
+            "minLength": 0,
+            "type": "string",
+            "description": "New password.",
+            "nullable": true,
+            "example": "8ENy$0YV936k"
+          }
+        },
+        "additionalProperties": false
+      },
+      "UserRegistrationModel_V1": {
+        "required": [
+          "password",
+          "role",
+          "username"
+        ],
+        "type": "object",
+        "properties": {
+          "username": {
+            "maxLength": 64,
+            "minLength": 6,
+            "pattern": "^[a-zA-Z][\\w.-]+[a-zA-Z]$",
+            "type": "string",
+            "description": "Username.",
+            "nullable": true,
+            "example": "ivan.ivanov"
+          },
+          "password": {
+            "maxLength": 128,
+            "minLength": 0,
+            "type": "string",
+            "description": "User password.",
+            "nullable": true,
+            "example": "m4A0?Edis66a"
+          },
+          "role": {
+            "$ref": "#/components/schemas/UserRoles"
+          },
+          "email": {
+            "type": "string",
+            "description": "Email.",
+            "format": "email",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "UserRoles": {
+        "enum": [
+          "ADMINISTRATOR",
+          "EMPLOYEE",
+          "CUSTOMER"
+        ],
+        "type": "string"
+      },
+      "UserSearchParams": {
+        "type": "object",
+        "properties": {
+          "requestedPageNumber": {
+            "type": "integer",
+            "description": "The page number to retrieve from the paginated results.",
+            "format": "int32"
+          },
+          "itemsPerPage": {
+            "type": "integer",
+            "description": "The number of items to include per page in the paginated results.",
+            "format": "int32"
+          },
+          "username": {
+            "maxLength": 64,
+            "minLength": 0,
+            "type": "string",
+            "description": "Username.",
+            "nullable": true
+          },
+          "role": {
+            "$ref": "#/components/schemas/UserRoles"
+          },
+          "status": {
+            "$ref": "#/components/schemas/UserStatuses"
+          }
+        },
+        "additionalProperties": false
+      },
+      "UserStatusModel_V1": {
+        "required": [
+          "reason",
+          "value"
+        ],
+        "type": "object",
+        "properties": {
+          "value": {
+            "$ref": "#/components/schemas/UserStatuses"
+          },
+          "reason": {
+            "$ref": "#/components/schemas/UserStatusReasons"
+          },
+          "note": {
+            "pattern": "^[a-zA-Z\\d\\s\\-.!?()]*$",
+            "type": "string",
+            "description": "Additional note for the status.",
+            "nullable": true,
+            "example": "test"
+          }
+        },
+        "additionalProperties": false
+      },
+      "UserStatusReasons": {
+        "enum": [
+          "NONE",
+          "MAX_WRONG_LOGIN_ATTEMPTS_REACHED",
+          "NEW_USER",
+          "EMAIL_CHANGED"
+        ],
+        "type": "string"
+      },
+      "UserStatuses": {
+        "enum": [
+          "ACTIVE",
+          "RESTRICTED",
+          "BLOCKED",
+          "DISABLED"
+        ],
+        "type": "string"
+      },
+      "UserUpdateModel_V1": {
+        "required": [
+          "role",
+          "status",
+          "username"
+        ],
+        "type": "object",
+        "properties": {
+          "username": {
+            "maxLength": 64,
+            "minLength": 6,
+            "pattern": "^[a-zA-Z][\\w.-]+[a-zA-Z]$",
+            "type": "string",
+            "description": "Username.",
+            "nullable": true,
+            "example": "ivan.ivanov"
+          },
+          "role": {
+            "$ref": "#/components/schemas/UserRoles"
+          },
+          "status": {
+            "$ref": "#/components/schemas/UserStatusModel_V1"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "securitySchemes": {
+      "Basic": {
+        "type": "http",
+        "description": "Use to obtain access token for a client.",
+        "scheme": "basic"
+      },
+      "Bearer": {
+        "type": "http",
+        "description": "Adds 'Authorization' header with the value for all HTTP requests below.",
+        "scheme": "bearer"
+      }
+    }
+  },
+  "security": [
+    {
+      "Basic": [ ],
+      "Bearer": [ ]
+    }
+  ]
+}
