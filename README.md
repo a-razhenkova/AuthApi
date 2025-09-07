@@ -13,3 +13,7 @@
 
 ### Token Validation
 - **POST** `/api/v1/tokens/validate` → Validate an access token (works for both clients and users).
+
+---
+
+Complete API documentation can be found in `swagger.json`.
