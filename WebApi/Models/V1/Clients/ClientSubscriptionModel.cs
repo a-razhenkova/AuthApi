@@ -5,16 +5,16 @@
         /// <summary>
         /// The expiration date of the subscription.
         /// </summary>
-        public DateTime ExpirationDate { get; set; } = DateTime.Now;
+        public required DateTime ExpirationDate { get; set; }
 
         /// <summary>
         /// The contract identifier associated with the subscription.
         /// </summary>
-        public long ContractId { get; set; } = 0;
+        public required long ContractId { get; set; }
 
         /// <summary>
         /// The name of the contract associated with the subscription.
         /// </summary>
-        public string ContractName { get; set; } = string.Empty;
+        public required string ContractName { get; set; }
     }
 }

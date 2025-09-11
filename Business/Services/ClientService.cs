@@ -55,7 +55,7 @@ namespace Business
                 .Include(c => c.Status)
                 .Include(c => c.Right)
                 .Include(c => c.Subscriptions
-                               .Where(s => s.Subscription.ExpirationDate.Date >= DateTime.Now.Date)
+                               .Where(s => s.Subscription.ExpirationDate.Date >= DateTime.UtcNow.Date)
                                .OrderByDescending(s => s.Id))
                     .ThenInclude(cs => cs.Subscription)
                     .ThenInclude(s => s.Contract)
@@ -183,6 +183,7 @@ namespace Business
                 {
                     Subscription = new Subscription()
                     {
+                        CreateTimestamp = expirationDate.Date,
                         ExpirationDate = expirationDate.Date,
                         Contract = new Document()
                         {

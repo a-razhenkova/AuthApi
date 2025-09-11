@@ -61,12 +61,14 @@ namespace WebApi.V1
                 {
                     Value = UserStatuses.Restricted,
                     Reason = UserStatusReasons.NewUser
-                }));
+                }))
+                .ForMember(dest => dest.RegistrationTimestamp, opt => opt.MapFrom(src => DateTime.UtcNow));
 
             CreateMap<UserUpdateModel, UserDto>()
                 .ForMember(dest => dest.ExternalId, opt => opt.Ignore())
                 .ForMember(dest => dest.Password, opt => opt.Ignore())
-                .ForMember(dest => dest.Email, opt => opt.Ignore());
+                .ForMember(dest => dest.Email, opt => opt.Ignore())
+                .ForMember(dest => dest.RegistrationTimestamp, opt => opt.Ignore());
 
             CreateMap<UserStatusModel, UserStatusDto>()
                 .ReverseMap();

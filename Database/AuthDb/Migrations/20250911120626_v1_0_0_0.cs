@@ -64,7 +64,8 @@ namespace Database.AuthDb.Migrations
                     role = table.Column<int>(type: "int", nullable: false),
                     otp_secret = table.Column<string>(type: "varchar(64)", unicode: false, maxLength: 64, nullable: false),
                     email = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    is_verified = table.Column<bool>(type: "bit", nullable: false)
+                    is_verified = table.Column<bool>(type: "bit", nullable: false),
+                    registration_timestamp = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {

@@ -15,7 +15,8 @@ namespace Business
             return new UserPassword()
             {
                 Value = hash,
-                Secret = salt
+                Secret = salt,
+                LastChangedTimestamp = DateTime.UtcNow
             };
         }
 

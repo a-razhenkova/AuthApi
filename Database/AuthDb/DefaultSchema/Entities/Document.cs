@@ -9,7 +9,7 @@ namespace Database.AuthDb.DefaultSchema
     {
         [Required]
         [Column("sign_timestamp", Order = 2)]
-        public DateTime SignTimestamp { get; set; } = DateTime.UtcNow;
+        public DateTime SignTimestamp { get; set; }
 
         [Required]
         [Column("name", Order = 3)]

@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Database.AuthDb.Migrations
 {
     [DbContext(typeof(AuthDbContext))]
-    [Migration("20250911103238_v1_0_0_0")]
+    [Migration("20250911120626_v1_0_0_0")]
     partial class v1_0_0_0
     {
         /// <inheritdoc />
@@ -371,6 +371,11 @@ namespace Database.AuthDb.Migrations
                         .HasColumnType("varchar(64)")
                         .HasColumnName("otp_secret")
                         .HasColumnOrder(6);
+
+                    b.Property<DateTime>("RegistrationTimestamp")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("registration_timestamp")
+                        .HasColumnOrder(9);
 
                     b.Property<int>("Role")
                         .HasColumnType("int")

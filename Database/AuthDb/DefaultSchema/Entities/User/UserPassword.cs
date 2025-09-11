@@ -25,7 +25,7 @@ namespace Database.AuthDb.DefaultSchema
 
         [Required]
         [Column("last_changed_timestamp", Order = 5)]
-        public DateTime LastChangedTimestamp { get; set; } = DateTime.UtcNow;
+        public DateTime LastChangedTimestamp { get; set; }
 
         #region Relationships
 

@@ -15,6 +15,8 @@ namespace Business
         public UserStatusDto Status { get; set; } = new UserStatusDto();
 
         public string? Email { get; set; }
+
+        public DateTime RegistrationTimestamp { get; set; } = DateTime.UtcNow;
     }
 
     public class UserStatusDto

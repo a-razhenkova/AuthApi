@@ -26,7 +26,7 @@ namespace Database.AuthDb.DefaultSchema
 
         [Required]
         [Column("wrong_login_attempts_counter", Order = 5)]
-        public int WrongLoginAttemptsCounter { get; set; } = 0;
+        public int WrongLoginAttemptsCounter { get; set; }
 
         [Required]
         [Column("is_internal", Order = 6)]

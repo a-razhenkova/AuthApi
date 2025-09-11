@@ -13,7 +13,7 @@ namespace Database.AuthDb.DefaultSchema
 
         [Required]
         [Column("wrong_login_attempts_counter", Order = 3)]
-        public int WrongLoginAttemptsCounter { get; set; } = 0;
+        public int WrongLoginAttemptsCounter { get; set; }
 
         [Column("last_login_timestamp", Order = 4)]
         public DateTime? LastLoginDate { get; set; }

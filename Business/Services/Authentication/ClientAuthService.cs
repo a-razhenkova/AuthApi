@@ -30,7 +30,7 @@ namespace Business
                 .Where(c => c.Key == clientKey)
                 .Include(c => c.Status)
                 .Include(c => c.Right)
-                .Include(c => c.Subscriptions.Where(s => s.Subscription.ExpirationDate >= DateTime.Now.Date))
+                .Include(c => c.Subscriptions.Where(s => s.Subscription.ExpirationDate >= DateTime.UtcNow.Date))
                 .SingleOrDefaultAsync() ?? throw new UnauthorizedException("Invalid credentials.");
 
             if (!client.Status.IsAuthAllowed())

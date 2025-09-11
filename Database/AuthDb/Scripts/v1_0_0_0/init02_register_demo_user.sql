@@ -8,7 +8,8 @@ BEGIN TRY
 		   0 /* Administrator */ AS [role],
 		   'DNo+ZzGdBKpttZHUzuHxSQ==' AS [otp_secret],
 		   NULL AS [email],
-		   0 AS [is_verified]
+		   0 AS [is_verified],
+		   GETDATE() AS [registration_timestamp]
 
 	INSERT INTO [dbo].[user_status]
 	SELECT NULL AS [version],

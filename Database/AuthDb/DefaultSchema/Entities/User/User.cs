@@ -33,8 +33,13 @@ namespace Database.AuthDb.DefaultSchema
         [EmailAddress]
         public string Email { get; set; }
 
+        [Required]
         [Column("is_verified", Order = 8)]
         public bool IsVerified { get; set; } = false;
+
+        [Required]
+        [Column("registration_timestamp", Order = 9)]
+        public DateTime RegistrationTimestamp { get; set; }
 
         #region Relationships
 

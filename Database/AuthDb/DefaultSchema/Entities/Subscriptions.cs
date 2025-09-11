@@ -8,7 +8,7 @@ namespace Database.AuthDb.DefaultSchema
     {
         [Required]
         [Column("create_timestamp", Order = 2)]
-        public DateTime CreateTimestamp { get; set; } = DateTime.UtcNow;
+        public DateTime CreateTimestamp { get; set; }
 
         [Required]
         [Column("expiration_date", Order = 3)]

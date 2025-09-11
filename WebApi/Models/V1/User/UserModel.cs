@@ -35,5 +35,10 @@ namespace WebApi.V1
         /// <example>ivan.ivanov@mail.com</example>
         [EmailAddress]
         public string? Email { get; set; }
+
+        /// <summary>
+        /// Registration timestamp.
+        /// </summary>
+        public required DateTime RegistrationTimestamp { get; set; }
     }
 }

@@ -369,6 +369,11 @@ namespace Database.AuthDb.Migrations
                         .HasColumnName("otp_secret")
                         .HasColumnOrder(6);
 
+                    b.Property<DateTime>("RegistrationTimestamp")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("registration_timestamp")
+                        .HasColumnOrder(9);
+
                     b.Property<int>("Role")
                         .HasColumnType("int")
                         .HasColumnName("role")
