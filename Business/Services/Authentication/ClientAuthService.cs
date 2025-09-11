@@ -30,10 +30,20 @@ namespace Business
                 .Where(c => c.Key == clientKey)
                 .Include(c => c.Status)
                 .Include(c => c.Right)
+                .Include(c => c.Subscriptions.Where(s => s.Subscription.ExpirationDate >= DateTime.Now.Date))
                 .SingleOrDefaultAsync() ?? throw new UnauthorizedException("Invalid credentials.");
 
             if (!client.Status.IsAuthAllowed())
-                throw new ForbiddenException($"Client status is {client.Status.Value}.");
+                throw new ForbiddenException($"Client status is '{client.Status.Value}'.");
+
+            if (!client.IsInternal && !client.Subscriptions.Any())
+            {
+                client.Status.Value = ClientStatuses.Disabled;
+                client.Status.Reason = ClientStatusReasons.ExpiredSubscription;
+                await _authDbContext.SaveChangesAsync();
+
+                throw new ForbiddenException("Client subscription has expired.");
+            }
 
             bool isSecretValid = client.Secret == clientSecret;
 
@@ -62,6 +72,5 @@ namespace Business
                 }
             }
         }
-
     }
 }

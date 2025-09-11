@@ -13,6 +13,8 @@ namespace Business
         public ClientRightDto Right { get; set; } = new ClientRightDto();
 
         public bool IsInternal { get; set; } = false;
+
+        public IEnumerable<ClientSubscriptionDto> Subscriptions { get; set; } = new List<ClientSubscriptionDto>();
     }
 
     public class ClientStatusDto
@@ -27,5 +29,14 @@ namespace Business
     public class ClientRightDto
     {
         public bool CanNotifyParty { get; set; } = false;
+    }
+
+    public class ClientSubscriptionDto
+    {
+        public DateTime ExpirationDate { get; set; } = DateTime.Now;
+
+        public long ContractId { get; set; } = 0;
+
+        public string ContractName { get; set; } = string.Empty;
     }
 }

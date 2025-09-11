@@ -29,5 +29,7 @@ namespace WebApi.V1
         /// Client right.
         /// </summary>
         public required ClientRightModel Right { get; set; }
+
+        public required IEnumerable<ClientSubscriptionModel> Subscriptions { get; set; }
     }
 }

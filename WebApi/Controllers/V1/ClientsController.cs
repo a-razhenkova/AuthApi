@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Business;
 using Microsoft.AspNetCore.Mvc;
+using System.Net.Mime;
 
 namespace WebApi.V1
 {
@@ -106,6 +107,38 @@ namespace WebApi.V1
         {
             await _client.RefreshSecretAsync(key);
             return Ok();
+        }
+
+        /// <summary>
+        /// Renews the subscription for a client.
+        /// </summary>
+        /// <param name="key">The key of the client whose subscription is to be renewed.</param>
+        /// <param name="expirationDate">The expiration date for the subscription.</param>
+        /// <param name="file">The contract file to be uploaded as part of the renewal.</param>
+        [SensitiveData]
+        [HttpPatch("{key}/subscriptions")]
+        [Consumes(MediaTypeNames.Multipart.FormData)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<IActionResult> RenewClientSubscriptionAsync(string key, [FromForm] DateTime expirationDate, IFormFile file)
+        {
+            await _client.RenewSubscription(key, expirationDate, file);
+            return Ok();
+        }
+
+        /// <summary>
+        /// Downloads the subscription contract for a specific client.
+        /// </summary>
+        /// <param name="key">The key of the client whose contract is to be retrieved.</param>
+        /// <param name="id">The ID of the contract to download.</param>
+        /// <returns>The contract.</returns>
+        [SensitiveData(isRequestSensitive: false, isResponseSensitive: true)]
+        [HttpGet("{key}/subscriptions/contracts/{id}")]
+        [Produces(MediaTypeNames.Application.Pdf)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<IActionResult> DownloadCurrentClientContractAsync(string key, int id)
+        {
+            FileDto file = await _client.DownloadContractAsync(key, id);
+            return File(file.Content, MediaTypeNames.Application.Pdf, file.Name);
         }
     }
 }

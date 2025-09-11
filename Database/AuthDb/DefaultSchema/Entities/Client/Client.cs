@@ -41,7 +41,7 @@ namespace Database.AuthDb.DefaultSchema
         public virtual ClientRight Right { get; set; }
 
         [InverseProperty(nameof(ClientSubscription.Client))]
-        public virtual ClientSubscription Subscription { get; set; }
+        public virtual ICollection<ClientSubscription> Subscriptions { get; set; } = new List<ClientSubscription>();
 
         #endregion
     }

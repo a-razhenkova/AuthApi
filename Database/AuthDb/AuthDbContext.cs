@@ -15,6 +15,8 @@ namespace Database.AuthDb
         #region DefaultSchema
 
         public DbSet<DefaultSchema.Login> Login { get; set; }
+        public DbSet<DefaultSchema.Document> Document { get; set; }
+        public DbSet<DefaultSchema.Subscription> Subscription { get; set; }
 
         public DbSet<DefaultSchema.Client> Client { get; set; }
         public DbSet<DefaultSchema.ClientStatus> ClientStatus { get; set; }

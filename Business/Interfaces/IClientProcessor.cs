@@ -1,4 +1,6 @@
-﻿namespace Business
+﻿using Microsoft.AspNetCore.Http;
+
+namespace Business
 {
     public interface IClientProcessor
     {
@@ -11,5 +13,9 @@
 
         Task<string> LoadSecretAsync(string key);
         Task<string> RefreshSecretAsync(string key);
+
+        Task RenewSubscription(string clientKey, DateTime expirationDate, IFormFile file);
+
+        Task<FileDto> DownloadContractAsync(string clientKey, int contractId);
     }
 }

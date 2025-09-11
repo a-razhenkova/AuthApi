@@ -10,6 +10,9 @@ namespace Infrastructure.Configuration.AppSettings
 
         public DatabaseOptions Database { get; init; } = new();
 
+        [Required]
+        public string ClientSubscriptionContractDirectory { get; set; } = string.Empty;
+
         public PaginatedReportOptions PaginatedReport { get; init; } = new();
 
         public InternalServicesOptions InternalServices { get; init; } = new();

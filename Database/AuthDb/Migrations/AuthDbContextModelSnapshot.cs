@@ -179,9 +179,9 @@ namespace Database.AuthDb.Migrations
                         .HasColumnName("client_id")
                         .HasColumnOrder(2);
 
-                    b.Property<DateTime>("ExpirationDate")
-                        .HasColumnType("datetime2")
-                        .HasColumnName("expiration_date")
+                    b.Property<long>("SubscriptionId")
+                        .HasColumnType("bigint")
+                        .HasColumnName("subscription_id")
                         .HasColumnOrder(3);
 
                     b.Property<byte[]>("Version")
@@ -194,10 +194,56 @@ namespace Database.AuthDb.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ClientId")
-                        .IsUnique();
+                    b.HasIndex("ClientId");
+
+                    b.HasIndex("SubscriptionId");
 
                     b.ToTable("client_subscription", "dbo");
+                });
+
+            modelBuilder.Entity("Database.AuthDb.DefaultSchema.Document", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasColumnName("id")
+                        .HasColumnOrder(0);
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<string>("Checksum")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("checksum")
+                        .HasColumnOrder(4);
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("name")
+                        .HasColumnOrder(3);
+
+                    b.Property<DateTime>("SignTimestamp")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("sign_timestamp")
+                        .HasColumnOrder(2);
+
+                    b.Property<int>("Type")
+                        .HasColumnType("int")
+                        .HasColumnName("type")
+                        .HasColumnOrder(5);
+
+                    b.Property<byte[]>("Version")
+                        .IsConcurrencyToken()
+                        .IsRequired()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion")
+                        .HasColumnName("version")
+                        .HasColumnOrder(1);
+
+                    b.HasKey("Id");
+
+                    b.ToTable("document", "dbo");
                 });
 
             modelBuilder.Entity("Database.AuthDb.DefaultSchema.Login", b =>
@@ -244,6 +290,47 @@ namespace Database.AuthDb.Migrations
                         .IsUnique();
 
                     b.ToTable("login", "dbo");
+                });
+
+            modelBuilder.Entity("Database.AuthDb.DefaultSchema.Subscription", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasColumnName("id")
+                        .HasColumnOrder(0);
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<long>("ContractId")
+                        .HasColumnType("bigint")
+                        .HasColumnName("contract_id")
+                        .HasColumnOrder(4);
+
+                    b.Property<DateTime>("CreateTimestamp")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("create_timestamp")
+                        .HasColumnOrder(2);
+
+                    b.Property<DateTime>("ExpirationDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("expiration_date")
+                        .HasColumnOrder(3);
+
+                    b.Property<byte[]>("Version")
+                        .IsConcurrencyToken()
+                        .IsRequired()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion")
+                        .HasColumnName("version")
+                        .HasColumnOrder(1);
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ContractId")
+                        .IsUnique();
+
+                    b.ToTable("subscription", "dbo");
                 });
 
             modelBuilder.Entity("Database.AuthDb.DefaultSchema.User", b =>
@@ -437,12 +524,20 @@ namespace Database.AuthDb.Migrations
             modelBuilder.Entity("Database.AuthDb.DefaultSchema.ClientSubscription", b =>
                 {
                     b.HasOne("Database.AuthDb.DefaultSchema.Client", "Client")
-                        .WithOne("Subscription")
-                        .HasForeignKey("Database.AuthDb.DefaultSchema.ClientSubscription", "ClientId")
+                        .WithMany("Subscriptions")
+                        .HasForeignKey("ClientId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Database.AuthDb.DefaultSchema.Subscription", "Subscription")
+                        .WithMany("ClientSubscriptions")
+                        .HasForeignKey("SubscriptionId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Client");
+
+                    b.Navigation("Subscription");
                 });
 
             modelBuilder.Entity("Database.AuthDb.DefaultSchema.Login", b =>
@@ -454,6 +549,17 @@ namespace Database.AuthDb.Migrations
                         .IsRequired();
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Database.AuthDb.DefaultSchema.Subscription", b =>
+                {
+                    b.HasOne("Database.AuthDb.DefaultSchema.Document", "Contract")
+                        .WithOne("Subscription")
+                        .HasForeignKey("Database.AuthDb.DefaultSchema.Subscription", "ContractId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Contract");
                 });
 
             modelBuilder.Entity("Database.AuthDb.DefaultSchema.UserPassword", b =>
@@ -484,7 +590,17 @@ namespace Database.AuthDb.Migrations
 
                     b.Navigation("Status");
 
+                    b.Navigation("Subscriptions");
+                });
+
+            modelBuilder.Entity("Database.AuthDb.DefaultSchema.Document", b =>
+                {
                     b.Navigation("Subscription");
+                });
+
+            modelBuilder.Entity("Database.AuthDb.DefaultSchema.Subscription", b =>
+                {
+                    b.Navigation("ClientSubscriptions");
                 });
 
             modelBuilder.Entity("Database.AuthDb.DefaultSchema.User", b =>

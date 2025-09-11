@@ -34,6 +34,24 @@ namespace Database.AuthDb.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "document",
+                schema: "dbo",
+                columns: table => new
+                {
+                    id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    version = table.Column<byte[]>(type: "rowversion", rowVersion: true, nullable: false),
+                    sign_timestamp = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    checksum = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    type = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_document", x => x.id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "user",
                 schema: "dbo",
                 columns: table => new
@@ -102,24 +120,25 @@ namespace Database.AuthDb.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "client_subscription",
+                name: "subscription",
                 schema: "dbo",
                 columns: table => new
                 {
                     id = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     version = table.Column<byte[]>(type: "rowversion", rowVersion: true, nullable: false),
-                    client_id = table.Column<long>(type: "bigint", nullable: false),
-                    expiration_date = table.Column<DateTime>(type: "datetime2", nullable: false)
+                    create_timestamp = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    expiration_date = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    contract_id = table.Column<long>(type: "bigint", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_client_subscription", x => x.id);
+                    table.PrimaryKey("PK_subscription", x => x.id);
                     table.ForeignKey(
-                        name: "FK_client_subscription_client_client_id",
-                        column: x => x.client_id,
+                        name: "FK_subscription_document_contract_id",
+                        column: x => x.contract_id,
                         principalSchema: "dbo",
-                        principalTable: "client",
+                        principalTable: "document",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -199,6 +218,36 @@ namespace Database.AuthDb.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "client_subscription",
+                schema: "dbo",
+                columns: table => new
+                {
+                    id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    version = table.Column<byte[]>(type: "rowversion", rowVersion: true, nullable: false),
+                    client_id = table.Column<long>(type: "bigint", nullable: false),
+                    subscription_id = table.Column<long>(type: "bigint", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_client_subscription", x => x.id);
+                    table.ForeignKey(
+                        name: "FK_client_subscription_client_client_id",
+                        column: x => x.client_id,
+                        principalSchema: "dbo",
+                        principalTable: "client",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_client_subscription_subscription_subscription_id",
+                        column: x => x.subscription_id,
+                        principalSchema: "dbo",
+                        principalTable: "subscription",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_client_key",
                 schema: "dbo",
@@ -224,14 +273,26 @@ namespace Database.AuthDb.Migrations
                 name: "IX_client_subscription_client_id",
                 schema: "dbo",
                 table: "client_subscription",
-                column: "client_id",
-                unique: true);
+                column: "client_id");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_client_subscription_subscription_id",
+                schema: "dbo",
+                table: "client_subscription",
+                column: "subscription_id");
 
             migrationBuilder.CreateIndex(
                 name: "IX_login_user_id",
                 schema: "dbo",
                 table: "login",
                 column: "user_id",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_subscription_contract_id",
+                schema: "dbo",
+                table: "subscription",
+                column: "contract_id",
                 unique: true);
 
             migrationBuilder.CreateIndex(
@@ -295,7 +356,15 @@ namespace Database.AuthDb.Migrations
                 schema: "dbo");
 
             migrationBuilder.DropTable(
+                name: "subscription",
+                schema: "dbo");
+
+            migrationBuilder.DropTable(
                 name: "user",
+                schema: "dbo");
+
+            migrationBuilder.DropTable(
+                name: "document",
                 schema: "dbo");
         }
     }

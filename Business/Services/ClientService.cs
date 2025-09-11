@@ -2,21 +2,27 @@
 using Database.AuthDb;
 using Database.AuthDb.DefaultSchema;
 using Infrastructure;
+using Infrastructure.Configuration.AppSettings;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using System.Data;
 
 namespace Business
 {
     public class ClientService : IClientProcessor
     {
+        private readonly AppSettingsOptions _appSettingsOptions;
         private readonly AuthDbContext _authDbContext;
         private readonly IMapper _mapper;
         private readonly IReportProvider _reportProvider;
 
-        public ClientService(AuthDbContext authDbContext,
+        public ClientService(IOptionsSnapshot<AppSettingsOptions> appSettingsOptions,
+                            AuthDbContext authDbContext,
                             IMapper mapper,
                             IReportProvider reportProvider)
         {
+            _appSettingsOptions = appSettingsOptions.Value;
             _authDbContext = authDbContext;
             _mapper = mapper;
             _reportProvider = reportProvider;
@@ -47,6 +53,12 @@ namespace Business
 
             searchQuery = searchQuery
                 .Include(c => c.Status)
+                .Include(c => c.Right)
+                .Include(c => c.Subscriptions
+                               .Where(s => s.Subscription.ExpirationDate.Date >= DateTime.Now.Date)
+                               .OrderByDescending(s => s.Id))
+                    .ThenInclude(cs => cs.Subscription)
+                    .ThenInclude(s => s.Contract)
                 .OrderByDescending(c => c.Id);
 
             return await _reportProvider.PreparePaginatedReport<Client, ClientDto>(searchQuery, clientSearchParams, cancellationToken);
@@ -96,10 +108,21 @@ namespace Business
         {
             Client client = await _authDbContext.Client
                 .Where(c => c.Key == key)
+                .Include(c => c.Status)
+                .Include(c => c.Subscriptions)
                 .SingleOrDefaultAsync() ?? throw new NotFoundException("Client not found.");
 
-            _authDbContext.Remove(client);
-            await _authDbContext.SaveChangesAsync();
+            if (client.Subscriptions.Any())
+            {
+                client.Status.Value = ClientStatuses.Disabled;
+                client.Status.Reason = ClientStatusReasons.None;
+                await _authDbContext.SaveChangesAsync();
+            }
+            else
+            {
+                _authDbContext.Remove(client);
+                await _authDbContext.SaveChangesAsync();
+            }
         }
 
         public async Task<string> LoadSecretAsync(string key)
@@ -122,6 +145,90 @@ namespace Business
             await _authDbContext.SaveChangesAsync();
 
             return client.Secret;
+        }
+
+        public async Task RenewSubscription(string clientKey, DateTime expirationDate, IFormFile file)
+        {
+            if (expirationDate <= DateTime.UtcNow.Date)
+            {
+                throw new BadRequestException("Invalid expiration date.");
+            }
+
+            string fileExtension = Path.GetExtension(file.FileName);
+
+            if (string.IsNullOrWhiteSpace(fileExtension)
+                || !fileExtension.Equals(FileExtensions.Pdf))
+            {
+                throw new BadRequestException("Invalid file type.");
+            }
+
+            Client client = await _authDbContext.Client
+                .Where(c => c.Key == clientKey)
+                .Include(c => c.Status)
+                .Include(c => c.Subscriptions)
+                .SingleOrDefaultAsync() ?? throw new NotFoundException("Client not found.");
+
+            DateTime signTimestamp = DateTime.UtcNow;
+            string fileName = $"{client.Key}_{signTimestamp:yyyyMMddHHmmssfff}{fileExtension}";
+            string contractPath = Path.Combine(_appSettingsOptions.ClientSubscriptionContractDirectory, signTimestamp.Year.ToString(), fileName);
+
+            FileExtensions.EnsureFileDirectoryExists(contractPath);
+
+            try
+            {
+                using FileStream content = File.Create(contractPath);
+                await file.CopyToAsync(content);
+
+                client.Subscriptions.Add(new ClientSubscription()
+                {
+                    Subscription = new Subscription()
+                    {
+                        ExpirationDate = expirationDate.Date,
+                        Contract = new Document()
+                        {
+                            SignTimestamp = signTimestamp,
+                            Name = fileName,
+                            Checksum = content.ComputeMd5Checksum(),
+                            Type = DocumentTypes.SubscriptionContract
+                        }
+                    }
+                });
+
+                if (client.Status.Reason == ClientStatusReasons.ExpiredSubscription)
+                {
+                    client.Status.Value = ClientStatuses.Active;
+                    client.Status.Reason = ClientStatusReasons.None;
+                }
+
+                await _authDbContext.SaveChangesAsync();
+            }
+            catch
+            {
+                if (File.Exists(contractPath))
+                    File.Delete(contractPath);
+
+                throw;
+            }
+        }
+
+        public async Task<FileDto> DownloadContractAsync(string clientKey, int contractId)
+        {
+            Document contract = await _authDbContext.ClientSubscription.AsNoTracking()
+                .Where(c => c.Client.Key.Equals(clientKey)
+                         && c.Subscription.Contract.Id == contractId
+                         && c.Subscription.Contract.Type == DocumentTypes.SubscriptionContract)
+                .Include(c => c.Client)
+                .Include(c => c.Subscription).ThenInclude(s => s.Contract)
+                .Select(c => c.Subscription.Contract)
+                .FirstOrDefaultAsync() ?? throw new NotFoundException("Contract not found.");
+
+            string contractPath = Path.Combine(_appSettingsOptions.ClientSubscriptionContractDirectory, contract.SignTimestamp.Year.ToString(), contract.Name);
+
+            return new FileDto()
+            {
+                Name = contract.Name,
+                Content = await File.ReadAllBytesAsync(contractPath)
+            };
         }
     }
 }

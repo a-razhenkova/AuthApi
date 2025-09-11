@@ -18,8 +18,8 @@ namespace Business
                 .ForMember(dest => dest.Version, opt => opt.Ignore())
                 .ForMember(dest => dest.Key, opt => opt.Ignore())
                 .ForMember(dest => dest.Secret, opt => opt.Ignore())
+                .ForMember(dest => dest.Subscriptions, opt => opt.Ignore())
                 .ForMember(dest => dest.WrongLoginAttemptsCounter, opt => opt.Ignore())
-                .ForMember(dest => dest.Subscription, opt => opt.Ignore())
                 .ReverseMap();
 
             CreateMap<ClientStatusDto, ClientStatus>()
@@ -34,6 +34,12 @@ namespace Business
                 .ForMember(dest => dest.Version, opt => opt.Ignore())
                 .ForMember(dest => dest.ClientId, opt => opt.Ignore())
                 .ForMember(dest => dest.Client, opt => opt.Ignore())
+                .ReverseMap();
+
+            CreateMap<ClientSubscription, ClientSubscriptionDto>()
+                .ForMember(dest => dest.ExpirationDate, opt => opt.MapFrom(src => src.Subscription.ExpirationDate))
+                .ForMember(dest => dest.ContractId, opt => opt.MapFrom(src => src.Subscription.Contract.Id))
+                .ForMember(dest => dest.ContractName, opt => opt.MapFrom(src => src.Subscription.Contract.Name))
                 .ReverseMap();
         }
 

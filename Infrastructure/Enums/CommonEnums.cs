@@ -49,4 +49,9 @@ namespace Infrastructure
         [Description("canNotifyParty")]
         CanNotifyParty
     }
+
+    public enum DocumentTypes
+    {
+        SubscriptionContract
+    }
 }

@@ -27,6 +27,7 @@ namespace WebApi.V1
         {
             CreateMap<ClientRegistrationModel, ClientDto>()
                 .ForMember(dest => dest.Key, opt => opt.Ignore())
+                .ForMember(dest => dest.Subscriptions, opt => opt.Ignore())
                 .ForMember(dest => dest.Status, opt => opt.MapFrom(src => new ClientStatusDto()
                 {
                     Value = src.IsInternal ? ClientStatuses.Active : ClientStatuses.Disabled,
@@ -34,12 +35,16 @@ namespace WebApi.V1
                 }));
 
             CreateMap<ClientUpdateModel, ClientDto>()
-                .ForMember(dest => dest.Key, opt => opt.Ignore());
+                .ForMember(dest => dest.Key, opt => opt.Ignore())
+                .ForMember(dest => dest.Subscriptions, opt => opt.Ignore());
 
             CreateMap<ClientStatusModel, ClientStatusDto>()
                 .ReverseMap();
 
             CreateMap<ClientRightModel, ClientRightDto>()
+                .ReverseMap();
+
+            CreateMap<ClientSubscriptionModel, ClientSubscriptionDto>()
                 .ReverseMap();
 
             CreateMap<ClientDto, ClientModel>()
