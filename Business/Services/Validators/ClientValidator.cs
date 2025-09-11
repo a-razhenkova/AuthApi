@@ -7,8 +7,8 @@ namespace Business
     {
         public static bool IsAuthAllowed(this ClientStatus status)
         {
-            return status.Value == ClientStatuses.Blocked
-                || status.Value == ClientStatuses.Disabled;
+            return status.Value != ClientStatuses.Blocked
+                && status.Value != ClientStatuses.Disabled;
         }
     }
 }

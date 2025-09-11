@@ -33,8 +33,8 @@ namespace Business
                 .Include(u => u.Login)
                 .SingleOrDefaultAsync() ?? throw new UnauthorizedException("Invalid credentials.");
 
-            if (user.Status.IsAuthAllowed())
-                throw new ForbiddenException($"User status is {user.Status.Value}.");
+            if (!user.Status.IsAuthAllowed())
+                throw new ForbiddenException($"User status is '{user.Status.Value}'.");
 
             bool isPasswordValid = UserPasswordProtector.IsPasswordValid(user.Password.Value, password, user.Password.Secret);
 
@@ -59,8 +59,8 @@ namespace Business
                .Include(u => u.Login)
                .SingleOrDefaultAsync() ?? throw new UnauthorizedException();
 
-            if (user.Status.IsAuthAllowed())
-                throw new ForbiddenException($"User status is {user.Status.Value}.");
+            if (!user.Status.IsAuthAllowed())
+                throw new ForbiddenException($"User status is '{user.Status.Value}'.");
 
             return user;
         }

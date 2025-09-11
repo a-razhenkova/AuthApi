@@ -63,8 +63,8 @@ namespace Business
                .Include(u => u.Login)
                .SingleOrDefaultAsync() ?? throw new UnauthorizedException("The code has expired.");
 
-            if (user.Status.IsAuthAllowed())
-                throw new ForbiddenException($"User status is {user.Status.Value}.");
+            if (!user.Status.IsAuthAllowed())
+                throw new ForbiddenException($"User status is '{user.Status.Value}'.");
 
             bool isPinValid = new TwoFactorAuthenticator().ValidateTwoFactorPIN(user.OtpSecret, otp, true);
 

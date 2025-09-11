@@ -98,8 +98,8 @@ namespace Business
         {
             User user = await _userAuthenticator.AuthAsync(username, password);
 
-            if (user.Status.IsOtpAuthAllowed())
-                throw new ForbiddenException($"User status is {user.Status.Value}.");
+            if (!user.Status.IsOtpAuthAllowed())
+                throw new ForbiddenException($"User status is '{user.Status.Value}'.");
 
             return await _otpProvider.CreateAndSendOtpAsync(user);
         }

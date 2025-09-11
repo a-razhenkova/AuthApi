@@ -7,14 +7,14 @@ namespace Business
     {
         public static bool IsAuthAllowed(this UserStatus status)
         {
-            return status.Value == UserStatuses.Blocked
-                || status.Value == UserStatuses.Disabled;
+            return status.Value != UserStatuses.Blocked
+                && status.Value != UserStatuses.Disabled;
         }
 
         public static bool IsOtpAuthAllowed(this UserStatus status)
         {
             return status.IsAuthAllowed()
-                || status.Value == UserStatuses.Restricted;
+                && status.Value != UserStatuses.Restricted;
         }
     }
 }
