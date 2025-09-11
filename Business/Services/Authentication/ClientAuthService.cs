@@ -32,7 +32,8 @@ namespace Business
                 .Include(c => c.Right)
                 .SingleOrDefaultAsync() ?? throw new UnauthorizedException("Invalid credentials.");
 
-            CheckClientStatus(client);
+            if (!client.Status.IsAuthAllowed())
+                throw new ForbiddenException($"Client status is {client.Status.Value}.");
 
             bool isSecretValid = client.Secret == clientSecret;
 
@@ -42,15 +43,6 @@ namespace Business
                 throw new UnauthorizedException("Invalid credentials.");
 
             return client;
-        }
-
-        private static void CheckClientStatus(Client client)
-        {
-            if (client.Status.Value == ClientStatuses.Blocked
-                || client.Status.Value == ClientStatuses.Disabled)
-            {
-                throw new ForbiddenException($"Client status is {client.Status.Value}.");
-            }
         }
 
         private void AddLoginAttemptAsync(Client client, bool isSuccessful)

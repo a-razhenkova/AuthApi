@@ -24,7 +24,7 @@ namespace WebApi.V1
         /// <returns>A paginated report of clients matching the search criteria.</returns>
         [HttpGet]
         [ProducesResponseType(typeof(PaginatedReport<ClientModel>), StatusCodes.Status200OK)]
-        public async Task<IActionResult> SearchClientAsync([FromQuery]ClientSearchParams searchParams, CancellationToken cancellationToken)
+        public async Task<IActionResult> SearchClientAsync([FromQuery] ClientSearchParams searchParams, CancellationToken cancellationToken)
         {
             PaginatedReport<ClientDto> searchResult = await _client.SearchAsync(searchParams, cancellationToken);
             return Ok(_mapper.Map<PaginatedReport<ClientModel>>(searchResult));
@@ -41,20 +41,6 @@ namespace WebApi.V1
         {
             ClientDto clientDto = await _client.LoadAsync(key);
             return Ok(_mapper.Map<ClientModel>(clientDto));
-        }
-
-        /// <summary>
-        /// Retrieves the secret of a client.
-        /// </summary>
-        /// <param name="key">The key of the client whose secret is to be retrieved.</param>
-        /// <returns>The secret of the client.</returns>
-        [SensitiveData(isRequestSensitive: false, isResponseSensitive: true)]
-        [HttpGet("{key}/secret")]
-        [ProducesResponseType(typeof(SimpleResponseModel<string>), StatusCodes.Status200OK)]
-        public async Task<IActionResult> LoadClientSecretAsync(string key)
-        {
-            string clientSecret = await _client.LoadSecretAsync(key);
-            return Ok(new SimpleResponseModel<string>(clientSecret));
         }
 
         /// <summary>
@@ -96,12 +82,26 @@ namespace WebApi.V1
         }
 
         /// <summary>
+        /// Retrieves the secret of a client.
+        /// </summary>
+        /// <param name="key">The key of the client whose secret is to be retrieved.</param>
+        /// <returns>The secret of the client.</returns>
+        [SensitiveData(isRequestSensitive: false, isResponseSensitive: true)]
+        [HttpGet("{key}/secrets")]
+        [ProducesResponseType(typeof(SimpleResponseModel<string>), StatusCodes.Status200OK)]
+        public async Task<IActionResult> LoadClientSecretAsync(string key)
+        {
+            string clientSecret = await _client.LoadSecretAsync(key);
+            return Ok(new SimpleResponseModel<string>(clientSecret));
+        }
+
+        /// <summary>
         /// Refreshes the secret for a client.
         /// </summary>
         /// <param name="key">The key of the client whose secret is to be refreshed.</param>
         [SensitiveData]
-        [HttpPatch("{key}/secret")]
-        [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
+        [HttpPatch("{key}/secrets")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<IActionResult> RefreshClientSecretAsync(string key)
         {
             await _client.RefreshSecretAsync(key);

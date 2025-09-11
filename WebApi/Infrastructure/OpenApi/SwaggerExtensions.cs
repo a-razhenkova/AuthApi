@@ -155,7 +155,7 @@ namespace WebApi
 <ul>
     <li>Use <code>POST /api/v1/tokens</code> for basic authorization to obtain <strong>access token</strong> for a <strong>client</strong>.</li>
     </br>
-    <li>Use <code>POST /api/v2/tokens</code> for bearer authorization to obtain <strong>access and refresh token</strong> for an <strong>user</strong>. Use <code>PUT /api/v2/tokens</code> to refresh the <strong>access token</strong> .</li>
+    <li>Use <code>POST /api/v2/tokens</code> for bearer authorization to obtain <strong>access and refresh token</strong> for an <strong>user</strong>. Use <code>PUT /api/v2/tokens</code> to refresh the <strong>access token</strong>.</li>
     </br>
     <li>Use <code>POST /api/v1/mfa/otp</code> to obtain <strong>OTP</strong> and then use it with <code>POST /api/v3/tokens</code> to obtain <strong>access and refresh token</strong> for a <strong>user</strong>.</li>
     </br>

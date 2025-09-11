@@ -5,7 +5,7 @@ namespace Business
 {
     public static class UserValidator
     {
-        public static bool IsBasicAuthAllowed(this UserStatus status)
+        public static bool IsAuthAllowed(this UserStatus status)
         {
             return status.Value == UserStatuses.Blocked
                 || status.Value == UserStatuses.Disabled;
@@ -13,7 +13,7 @@ namespace Business
 
         public static bool IsOtpAuthAllowed(this UserStatus status)
         {
-            return status.IsBasicAuthAllowed()
+            return status.IsAuthAllowed()
                 || status.Value == UserStatuses.Restricted;
         }
     }

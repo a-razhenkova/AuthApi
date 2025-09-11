@@ -29,8 +29,8 @@ namespace WebApi.V1
                 .ForMember(dest => dest.Key, opt => opt.Ignore())
                 .ForMember(dest => dest.Status, opt => opt.MapFrom(src => new ClientStatusDto()
                 {
-                    Value = ClientStatuses.Active,
-                    Reason = ClientStatusReasons.None
+                    Value = src.IsInternal ? ClientStatuses.Active : ClientStatuses.Disabled,
+                    Reason = src.IsInternal ? ClientStatusReasons.None : ClientStatusReasons.ExpiredSubscription
                 }));
 
             CreateMap<ClientUpdateModel, ClientDto>()

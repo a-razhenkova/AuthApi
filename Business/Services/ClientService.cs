@@ -63,15 +63,6 @@ namespace Business
             return _mapper.Map<ClientDto>(client);
         }
 
-        public async Task<string> LoadSecretAsync(string key)
-        {
-            Client client = await _authDbContext.Client.AsNoTracking()
-                .Where(c => c.Key == key)
-                .SingleOrDefaultAsync() ?? throw new NotFoundException("Client not found.");
-
-            return client.Secret;
-        }
-
         public async Task<string> RegisterAsync(ClientDto clientDto)
         {
             Client client = _mapper.Map<Client>(clientDto);
@@ -109,6 +100,15 @@ namespace Business
 
             _authDbContext.Remove(client);
             await _authDbContext.SaveChangesAsync();
+        }
+
+        public async Task<string> LoadSecretAsync(string key)
+        {
+            Client client = await _authDbContext.Client.AsNoTracking()
+                .Where(c => c.Key == key)
+                .SingleOrDefaultAsync() ?? throw new NotFoundException("Client not found.");
+
+            return client.Secret;
         }
 
         public async Task<string> RefreshSecretAsync(string key)

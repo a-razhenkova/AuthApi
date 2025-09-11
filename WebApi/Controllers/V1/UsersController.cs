@@ -25,7 +25,7 @@ namespace WebApi.V1
         /// <returns>A paginated report of users matching the search criteria.</returns>
         [HttpGet]
         [ProducesResponseType(typeof(PaginatedReport<UserModel>), StatusCodes.Status200OK)]
-        public async Task<IActionResult> SearchUsersAsync(UserSearchParams searchParams, CancellationToken cancellationToken)
+        public async Task<IActionResult> SearchUsersAsync([FromQuery] UserSearchParams searchParams, CancellationToken cancellationToken)
         {
             PaginatedReport<UserDto> searchResult = await _user.SearchAsync(searchParams, cancellationToken);
             return Ok(_mapper.Map<PaginatedReport<UserModel>>(searchResult));

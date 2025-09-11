@@ -17,9 +17,13 @@ namespace WebApi
                 .ValidateDataAnnotations()
                 .Validate(config =>
                 {
+                    config.Log.Validate();
+                    config.Log.File.Validate();
+
                     config.Security.Validate();
                     config.Security.RateLimiter.Validate();
                     config.Security.AccessToken.Validate();
+                    config.Security.RefreshToken.Validate();
                     config.Security.MultiFactorAuth.Validate();
 
                     config.Database.Validate();

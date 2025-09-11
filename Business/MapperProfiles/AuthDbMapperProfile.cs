@@ -39,7 +39,7 @@ namespace Business
 
         private void CreateUserMaps()
         {
-           CreateMap<UserDto, User>()
+            CreateMap<UserDto, User>()
                .ForMember(dest => dest.Id, opt => opt.Ignore())
                .ForMember(dest => dest.Version, opt => opt.Ignore())
                .ForMember(dest => dest.ExternalId, opt => opt.Ignore())
@@ -49,7 +49,7 @@ namespace Business
                .ForMember(dest => dest.Login, opt => opt.Ignore())
                .ReverseMap();
            
-           CreateMap<UserStatusDto, UserStatus>()
+            CreateMap<UserStatusDto, UserStatus>()
                .ForMember(dest => dest.Id, opt => opt.Ignore())
                .ForMember(dest => dest.Version, opt => opt.Ignore())
                .ForMember(dest => dest.UserId, opt => opt.Ignore())
