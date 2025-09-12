@@ -88,7 +88,7 @@ namespace WebApi.V1
         /// <param name="key">The key of the client whose secret is to be retrieved.</param>
         /// <returns>The secret of the client.</returns>
         [SensitiveData(isRequestSensitive: false, isResponseSensitive: true)]
-        [HttpGet("{key}/secrets")]
+        [HttpGet("{key}/secret")]
         [ProducesResponseType(typeof(SimpleResponseModel<string>), StatusCodes.Status200OK)]
         public async Task<IActionResult> LoadClientSecretAsync(string key)
         {
@@ -101,7 +101,7 @@ namespace WebApi.V1
         /// </summary>
         /// <param name="key">The key of the client whose secret is to be refreshed.</param>
         [SensitiveData]
-        [HttpPatch("{key}/secrets")]
+        [HttpPatch("{key}/secret")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<IActionResult> RefreshClientSecretAsync(string key)
         {
@@ -116,7 +116,7 @@ namespace WebApi.V1
         /// <param name="expirationDate">The expiration date for the subscription.</param>
         /// <param name="file">The contract file to be uploaded as part of the renewal.</param>
         [SensitiveData]
-        [HttpPatch("{key}/subscriptions")]
+        [HttpPatch("{key}/subscription")]
         [Consumes(MediaTypeNames.Multipart.FormData)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<IActionResult> RenewClientSubscriptionAsync(string key, [FromForm] DateTime expirationDate, IFormFile file)
@@ -132,7 +132,7 @@ namespace WebApi.V1
         /// <param name="id">The ID of the contract to download.</param>
         /// <returns>The contract.</returns>
         [SensitiveData(isRequestSensitive: false, isResponseSensitive: true)]
-        [HttpGet("{key}/subscriptions/contracts/{id}")]
+        [HttpGet("{key}/subscription/contract/{id}")]
         [Produces(MediaTypeNames.Application.Pdf)]
         [ProducesResponseType(typeof(byte[]), StatusCodes.Status200OK)]
         public async Task<IActionResult> DownloadCurrentClientContractAsync(string key, int id)

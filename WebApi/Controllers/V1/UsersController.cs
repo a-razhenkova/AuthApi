@@ -110,5 +110,16 @@ namespace WebApi.V1
             await _user.ChangeEmailAsync(id, requestModel.Email, requestModel.Password);
             return Ok();
         }
+
+        /// <summary>
+        /// Sends a verification email to the specified user.
+        /// </summary>
+        /// <param name="id">The external ID of the user to whom the verification email will be sent.</param>
+        [HttpPost("{id}/email/verification")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<IActionResult> SendUserEmailVerificationAsync(string id)
+        {
+            return Ok();
+        }
     }
 }

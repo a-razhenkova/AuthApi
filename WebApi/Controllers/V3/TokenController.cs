@@ -10,12 +10,12 @@ namespace WebApi.V3
     /// </summary>
     [Authorize]
     [ApiController, Route("api/v3/[controller]")]
-    public class TokensController : JsonApiControllerBase
+    public class TokenController : JsonApiControllerBase
     {
         private readonly IMapper _mapper;
         private readonly IAuthenticator _authenticator;
 
-        public TokensController(IMapper mapper,
+        public TokenController(IMapper mapper,
                                IAuthenticator authenticator)
         {
             _mapper = mapper;

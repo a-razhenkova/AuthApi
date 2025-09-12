@@ -8,12 +8,12 @@ using Microsoft.IdentityModel.Tokens;
 namespace WebApi.V1
 {
     [Route("api/v1/[controller]")]
-    public class TokensController : JsonApiControllerBase
+    public class TokenController : JsonApiControllerBase
     {
         private readonly IMapper _mapper;
         private readonly IAuthenticator _authenticator;
 
-        public TokensController(IMapper mapper,
+        public TokenController(IMapper mapper,
                                IAuthenticator authenticator)
         {
             _mapper = mapper;
@@ -36,7 +36,7 @@ namespace WebApi.V1
         /// Validates the provided access token.
         /// </summary>
         [AllowAnonymous]
-        [HttpPost("validate"), SkipLog]
+        [HttpPost("validation"), SkipLog]
         [ProducesResponseType(typeof(TokenValidationResultModel), StatusCodes.Status200OK)]
         public async Task<IActionResult> ValidateAccessTokenAsync()
         {

@@ -149,21 +149,22 @@ namespace WebApi
             {
                 Title = "Authentication API",
                 Description =
-@"<p>
-    The API provides secure identity and access management. It supports <strong>user</strong> and <strong>client</strong> registration, update, deletion and retrieval with paginated report.
-</p>
+@"<p>The API provides secure identity and access management. It supports <strong>user</strong> and <strong>client</strong> registration, update, deletion and retrieval with paginated report.</p>
 <ul>
-    <li>Use <code>POST /api/v1/tokens</code> for basic authorization to obtain <strong>access token</strong> for a <strong>client</strong>.</li>
+    <li>Use <code>POST /api/v1/token</code> for basic authorization to obtain <strong>access token</strong> for a <strong>client</strong>.</li>
     </br>
-    <li>Use <code>POST /api/v2/tokens</code> for bearer authorization to obtain <strong>access and refresh token</strong> for an <strong>user</strong>. Use <code>PUT /api/v2/tokens</code> to refresh the <strong>access token</strong>.</li>
+    <li>Use <code>POST /api/v2/token</code> for bearer authorization to obtain <strong>access and refresh token</strong> for an <strong>user</strong>. Use <code>PUT /api/v2/token</code> to refresh the <strong>access token</strong>.</li>
     </br>
-    <li>Use <code>POST /api/v1/mfa/otp</code> to obtain <strong>OTP</strong> and then use it with <code>POST /api/v3/tokens</code> to obtain <strong>access and refresh token</strong> for a <strong>user</strong>.</li>
+    <li>Use <code>POST /api/v1/mfa/otp</code> to obtain <strong>OTP</strong> and then use it with <code>POST /api/v3/token</code> to obtain <strong>access and refresh token</strong> for a <strong>user</strong>.</li>
     </br>
-    <li>Use <code>POST /api/v1/tokens/validate</code> to validate <strong>access token</strong> for both clients and users.</li>
+    <li>Use <code>POST /api/v1/token/validate</code> to validate <strong>access token</strong> for both clients and users.</li>
 </ul>
-<p>
-    Note: To authenticate, external clients are required to activate a subscription using <code>/api/v1/clients/{key}/subscriptions</code>.
-</p>",
+<p><strong>Notes:</strong></p>
+<dl>
+    <dd>To authenticate, external clients are required to activate a subscription via <code>PATCH /api/v1/clients/{key}/subscription</code>.</dd>
+    </br>
+    <dd>To authenticate with MFA, users are required to verify their email via <code>POST /api/v1/email/verification/{token}</code>.</dd>
+</dl>",
                 Version = $"{WebApiAssembly.GetVersion()}",
                 Contact = new OpenApiContact()
                 {
