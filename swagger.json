@@ -521,7 +521,21 @@
             }
           },
           "200": {
-            "description": "OK"
+            "description": "OK",
+            "content": {
+              "application/pdf": {
+                "schema": {
+                  "type": "string",
+                  "format": "byte"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "string",
+                  "format": "byte"
+                }
+              }
+            }
           }
         }
       }
