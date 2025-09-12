@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Business;
+using Infrastructure;
 using Microsoft.AspNetCore.Mvc;
 using System.Net.Mime;
 
@@ -110,18 +111,18 @@ namespace WebApi.V1
         }
 
         /// <summary>
-        /// Renews the subscription for a client.
+        /// Adds new subscription for a client.
         /// </summary>
         /// <param name="key">The key of the client whose subscription is to be renewed.</param>
         /// <param name="expirationDate">The expiration date for the subscription.</param>
         /// <param name="file">The contract file to be uploaded as part of the renewal.</param>
         [SensitiveData]
-        [HttpPatch("{key}/subscription")]
+        [HttpPost("{key}/subscriptions")]
         [Consumes(MediaTypeNames.Multipart.FormData)]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<IActionResult> RenewClientSubscriptionAsync(string key, [FromForm] DateTime expirationDate, IFormFile file)
+        public async Task<IActionResult> AddNewClientSubscriptionAsync(string key, [FromForm] DateTime expirationDate, IFormFile file)
         {
-            await _client.RenewSubscription(key, expirationDate, file);
+            await _client.AddNewSubscription(key, expirationDate, file);
             return Ok();
         }
 
@@ -132,12 +133,12 @@ namespace WebApi.V1
         /// <param name="id">The ID of the contract to download.</param>
         /// <returns>The contract.</returns>
         [SensitiveData(isRequestSensitive: false, isResponseSensitive: true)]
-        [HttpGet("{key}/subscription/contract/{id}")]
+        [HttpGet("{key}/subscriptions/contracts/{id}")]
         [Produces(MediaTypeNames.Application.Pdf)]
         [ProducesResponseType(typeof(byte[]), StatusCodes.Status200OK)]
-        public async Task<IActionResult> DownloadCurrentClientContractAsync(string key, int id)
+        public async Task<IActionResult> DownloadClientSubscriptionContractAsync(string key, int id)
         {
-            FileDto file = await _client.DownloadContractAsync(key, id);
+            FileDto file = await _client.DownloadContractAsync(key, id, DocumentTypes.SubscriptionContract);
             return File(file.Content, MediaTypeNames.Application.Pdf, file.Name);
         }
     }

@@ -23,7 +23,7 @@ namespace WebApi.V3
         }
 
         /// <summary>
-        /// Creates an access token for user by the provided OTP.
+        /// Creates access and refresh tokens for user by the provided OTP.
         /// </summary>
         /// <param name="userCredentials">The user's OTP and related two-factor authentication information.</param>
         [AllowAnonymous, SensitiveData(isResponseSensitive: true)]

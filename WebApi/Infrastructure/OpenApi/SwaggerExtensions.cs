@@ -161,7 +161,7 @@ namespace WebApi
 </ul>
 <p><strong>Notes:</strong></p>
 <dl>
-    <dd>To authenticate, external clients are required to activate a subscription via <code>PATCH /api/v1/clients/{key}/subscription</code>.</dd>
+    <dd>To authenticate, external clients are required to activate a subscription via <code>POST /api/v1/clients/{key}/subscriptions</code>.</dd>
     </br>
     <dd>To authenticate with MFA, users are required to verify their email via <code>POST /api/v1/email/verification/{token}</code>.</dd>
 </dl>",

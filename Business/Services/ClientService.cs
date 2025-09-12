@@ -147,7 +147,7 @@ namespace Business
             return client.Secret;
         }
 
-        public async Task RenewSubscription(string clientKey, DateTime expirationDate, IFormFile file)
+        public async Task AddNewSubscription(string clientKey, DateTime expirationDate, IFormFile file)
         {
             if (expirationDate <= DateTime.UtcNow.Date)
             {
@@ -212,12 +212,12 @@ namespace Business
             }
         }
 
-        public async Task<FileDto> DownloadContractAsync(string clientKey, int contractId)
+        public async Task<FileDto> DownloadContractAsync(string clientKey, int contractId, DocumentTypes documentType)
         {
             Document contract = await _authDbContext.ClientSubscription.AsNoTracking()
                 .Where(c => c.Client.Key.Equals(clientKey)
                          && c.Subscription.Contract.Id == contractId
-                         && c.Subscription.Contract.Type == DocumentTypes.SubscriptionContract)
+                         && c.Subscription.Contract.Type == documentType)
                 .Include(c => c.Client)
                 .Include(c => c.Subscription).ThenInclude(s => s.Contract)
                 .Select(c => c.Subscription.Contract)

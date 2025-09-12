@@ -23,7 +23,7 @@ namespace WebApi.V2
         }
 
         /// <summary>
-        /// Creates an access token for users.
+        /// Creates access and refresh tokens for users.
         /// </summary>
         /// <param name="userCredentials">User authentication credentials.</param>
         [AllowAnonymous, SensitiveData(isResponseSensitive: true)]

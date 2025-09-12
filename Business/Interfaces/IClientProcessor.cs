@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Infrastructure;
+using Microsoft.AspNetCore.Http;
 
 namespace Business
 {
@@ -14,8 +15,8 @@ namespace Business
         Task<string> LoadSecretAsync(string key);
         Task<string> RefreshSecretAsync(string key);
 
-        Task RenewSubscription(string clientKey, DateTime expirationDate, IFormFile file);
+        Task AddNewSubscription(string clientKey, DateTime expirationDate, IFormFile file);
 
-        Task<FileDto> DownloadContractAsync(string clientKey, int contractId);
+        Task<FileDto> DownloadContractAsync(string clientKey, int contractId, DocumentTypes documentType);
     }
 }
