@@ -157,7 +157,7 @@ namespace WebApi
     </br>
     <li>Use <code>POST /api/v1/mfa/otp</code> to obtain <strong>OTP</strong> and then use it with <code>POST /api/v3/token</code> to obtain <strong>access and refresh token</strong> for a <strong>user</strong>.</li>
     </br>
-    <li>Use <code>POST /api/v1/token/validate</code> to validate <strong>access token</strong> for both clients and users.</li>
+    <li>Use <code>POST /api/v1/token/status</code> to validate <strong>access token</strong> for both clients and users.</li>
 </ul>
 <p><strong>Notes:</strong></p>
 <dl>
