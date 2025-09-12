@@ -134,7 +134,7 @@ namespace WebApi.V1
         [SensitiveData(isRequestSensitive: false, isResponseSensitive: true)]
         [HttpGet("{key}/subscriptions/contracts/{id}")]
         [Produces(MediaTypeNames.Application.Pdf)]
-        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(byte[]), StatusCodes.Status200OK)]
         public async Task<IActionResult> DownloadCurrentClientContractAsync(string key, int id)
         {
             FileDto file = await _client.DownloadContractAsync(key, id);

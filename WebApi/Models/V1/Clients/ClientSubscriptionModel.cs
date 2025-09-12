@@ -15,6 +15,7 @@
         /// <summary>
         /// The name of the contract associated with the subscription.
         /// </summary>
+        /// <example>test.pdf</example>
         public required string ContractName { get; set; }
     }
 }

@@ -160,7 +160,10 @@ namespace WebApi
     <li>Use <code>POST /api/v1/mfa/otp</code> to obtain <strong>OTP</strong> and then use it with <code>POST /api/v3/tokens</code> to obtain <strong>access and refresh token</strong> for a <strong>user</strong>.</li>
     </br>
     <li>Use <code>POST /api/v1/tokens/validate</code> to validate <strong>access token</strong> for both clients and users.</li>
-</ul>",
+</ul>
+<p>
+    Note: To authenticate, external clients are required to activate a subscription using <code>/api/v1/clients/{key}/subscriptions</code>.
+</p>",
                 Version = $"{WebApiAssembly.GetVersion()}",
                 Contact = new OpenApiContact()
                 {
