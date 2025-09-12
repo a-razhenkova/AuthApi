@@ -2,7 +2,7 @@
   "openapi": "3.0.4",
   "info": {
     "title": "Authentication API",
-    "description": "<p>\r\n    The API provides secure identity and access management. It supports <strong>user</strong> and <strong>client</strong> registration, update, deletion and retrieval with paginated report.\r\n</p>\r\n<ul>\r\n    <li>Use <code>POST /api/v1/tokens</code> for basic authorization to obtain <strong>access token</strong> for a <strong>client</strong>.</li>\r\n    </br>\r\n    <li>Use <code>POST /api/v2/tokens</code> for bearer authorization to obtain <strong>access and refresh token</strong> for an <strong>user</strong>. Use <code>PUT /api/v2/tokens</code> to refresh the <strong>access token</strong>.</li>\r\n    </br>\r\n    <li>Use <code>POST /api/v1/mfa/otp</code> to obtain <strong>OTP</strong> and then use it with <code>POST /api/v3/tokens</code> to obtain <strong>access and refresh token</strong> for a <strong>user</strong>.</li>\r\n    </br>\r\n    <li>Use <code>POST /api/v1/tokens/validate</code> to validate <strong>access token</strong> for both clients and users.</li>\r\n</ul>",
+    "description": "<p>\r\n    The API provides secure identity and access management. It supports <strong>user</strong> and <strong>client</strong> registration, update, deletion and retrieval with paginated report.\r\n</p>\r\n<ul>\r\n    <li>Use <code>POST /api/v1/tokens</code> for basic authorization to obtain <strong>access token</strong> for a <strong>client</strong>.</li>\r\n    </br>\r\n    <li>Use <code>POST /api/v2/tokens</code> for bearer authorization to obtain <strong>access and refresh token</strong> for an <strong>user</strong>. Use <code>PUT /api/v2/tokens</code> to refresh the <strong>access token</strong>.</li>\r\n    </br>\r\n    <li>Use <code>POST /api/v1/mfa/otp</code> to obtain <strong>OTP</strong> and then use it with <code>POST /api/v3/tokens</code> to obtain <strong>access and refresh token</strong> for a <strong>user</strong>.</li>\r\n    </br>\r\n    <li>Use <code>POST /api/v1/tokens/validate</code> to validate <strong>access token</strong> for both clients and users.</li>\r\n</ul>\r\n<p>\r\n    Note: To authenticate, external clients are required to activate a subscription using <code>/api/v1/clients/{key}/subscriptions</code>.\r\n</p>",
     "contact": {
       "name": "Aleksandrina Razhenkova",
       "url": "https://github.com/a-razhenkova",
@@ -284,7 +284,7 @@
         }
       }
     },
-    "/api/v1/clients/{key}/secret": {
+    "/api/v1/clients/{key}/secrets": {
       "get": {
         "tags": [
           "Clients"
@@ -368,14 +368,160 @@
             }
           },
           "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "string"
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/v1/clients/{key}/subscriptions": {
+      "patch": {
+        "tags": [
+          "Clients"
+        ],
+        "summary": "Renews the subscription for a client.",
+        "operationId": "RenewClientSubscriptionAsync_V1",
+        "parameters": [
+          {
+            "name": "key",
+            "in": "path",
+            "description": "The key of the client whose subscription is to be renewed.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "X-Correlation-ID",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "expirationDate": {
+                    "type": "string",
+                    "description": "The expiration date for the subscription.",
+                    "format": "date-time"
+                  },
+                  "file": {
+                    "type": "string",
+                    "description": "The contract file to be uploaded as part of the renewal.",
+                    "format": "binary"
+                  }
+                }
+              },
+              "encoding": {
+                "expirationDate": {
+                  "style": "form"
+                },
+                "file": {
+                  "style": "form"
+                }
+              }
+            },
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "expirationDate": {
+                    "type": "string",
+                    "description": "The expiration date for the subscription.",
+                    "format": "date-time"
+                  },
+                  "file": {
+                    "type": "string",
+                    "description": "The contract file to be uploaded as part of the renewal.",
+                    "format": "binary"
+                  }
+                }
+              },
+              "encoding": {
+                "expirationDate": {
+                  "style": "form"
+                },
+                "file": {
+                  "style": "form"
                 }
               }
             }
+          }
+        },
+        "responses": {
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExceptionModel_V1"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/v1/clients/{key}/subscriptions/contracts/{id}": {
+      "get": {
+        "tags": [
+          "Clients"
+        ],
+        "summary": "Downloads the subscription contract for a specific client.",
+        "operationId": "DownloadCurrentClientContractAsync_V1",
+        "parameters": [
+          {
+            "name": "key",
+            "in": "path",
+            "description": "The key of the client whose contract is to be retrieved.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "description": "The ID of the contract to download.",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "X-Correlation-ID",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/pdf": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExceptionModel_V1"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExceptionModel_V1"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK"
           }
         }
       }
@@ -760,6 +906,50 @@
         "operationId": "SearchUsersAsync_V1",
         "parameters": [
           {
+            "name": "Username",
+            "in": "query",
+            "description": "Username.",
+            "schema": {
+              "maxLength": 64,
+              "minLength": 0,
+              "type": "string"
+            }
+          },
+          {
+            "name": "Role",
+            "in": "query",
+            "description": "User role.",
+            "schema": {
+              "$ref": "#/components/schemas/UserRoles"
+            }
+          },
+          {
+            "name": "Status",
+            "in": "query",
+            "description": "User status.",
+            "schema": {
+              "$ref": "#/components/schemas/UserStatuses"
+            }
+          },
+          {
+            "name": "RequestedPageNumber",
+            "in": "query",
+            "description": "The page number to retrieve from the paginated results.",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "ItemsPerPage",
+            "in": "query",
+            "description": "The number of items to include per page in the paginated results.",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
             "name": "X-Correlation-ID",
             "in": "header",
             "schema": {
@@ -767,16 +957,6 @@
             }
           }
         ],
-        "requestBody": {
-          "description": "Search parameters for filtering users.",
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/UserSearchParams"
-              }
-            }
-          }
-        },
         "responses": {
           "500": {
             "description": "Internal Server Error",
@@ -1135,7 +1315,8 @@
           "key",
           "name",
           "right",
-          "status"
+          "status",
+          "subscriptions"
         ],
         "type": "object",
         "properties": {
@@ -1161,6 +1342,13 @@
           },
           "right": {
             "$ref": "#/components/schemas/ClientRightModel_V1"
+          },
+          "subscriptions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ClientSubscriptionModel_V1"
+            },
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -1235,6 +1423,33 @@
           "DISABLED"
         ],
         "type": "string"
+      },
+      "ClientSubscriptionModel_V1": {
+        "required": [
+          "contractId",
+          "contractName",
+          "expirationDate"
+        ],
+        "type": "object",
+        "properties": {
+          "expirationDate": {
+            "type": "string",
+            "description": "The expiration date of the subscription.",
+            "format": "date-time"
+          },
+          "contractId": {
+            "type": "integer",
+            "description": "The contract identifier associated with the subscription.",
+            "format": "int64"
+          },
+          "contractName": {
+            "type": "string",
+            "description": "The name of the contract associated with the subscription.",
+            "nullable": true,
+            "example": "test.pdf"
+          }
+        },
+        "additionalProperties": false
       },
       "ClientUpdateModel_V1": {
         "required": [
@@ -1506,6 +1721,7 @@
       "UserModel_V1": {
         "required": [
           "id",
+          "registrationTimestamp",
           "role",
           "status",
           "username"
@@ -1539,6 +1755,11 @@
             "format": "email",
             "nullable": true,
             "example": "ivan.ivanov@mail.com"
+          },
+          "registrationTimestamp": {
+            "type": "string",
+            "description": "Registration timestamp.",
+            "format": "date-time"
           }
         },
         "additionalProperties": false
@@ -1613,35 +1834,6 @@
           "CUSTOMER"
         ],
         "type": "string"
-      },
-      "UserSearchParams": {
-        "type": "object",
-        "properties": {
-          "requestedPageNumber": {
-            "type": "integer",
-            "description": "The page number to retrieve from the paginated results.",
-            "format": "int32"
-          },
-          "itemsPerPage": {
-            "type": "integer",
-            "description": "The number of items to include per page in the paginated results.",
-            "format": "int32"
-          },
-          "username": {
-            "maxLength": 64,
-            "minLength": 0,
-            "type": "string",
-            "description": "Username.",
-            "nullable": true
-          },
-          "role": {
-            "$ref": "#/components/schemas/UserRoles"
-          },
-          "status": {
-            "$ref": "#/components/schemas/UserStatuses"
-          }
-        },
-        "additionalProperties": false
       },
       "UserStatusModel_V1": {
         "required": [

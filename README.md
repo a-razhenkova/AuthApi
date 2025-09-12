@@ -1,19 +1,44 @@
-## 🔐 How to Authenticate
+# :closed_lock_with_key: How to Authenticate
 
-### Client Authentication
-- **POST** `/api/v1/tokens` → Obtain an access token using basic authorization.
+## :computer: Client Authentication
 
-### User Authentication
-- **POST** `/api/v2/tokens` → Obtain access and refresh tokens.  
-- **PUT** `/api/v2/tokens` → Refresh an access token.
+### Single-Factor Authentication
+An **access token** can be obtained using basic authentication with:\
+`POST /api/v1/tokens`
 
-### Multi-Factor Authentication (for users only)
-- **POST** `/api/v1/mfa/otp` → Request an OTP.  
-- **POST** `/api/v3/tokens` → Exchange OTP for access and refresh tokens.
+> [!IMPORTANT]
+> External clients are required to activate a **subscription** via:\
+> `POST /api/v1/clients/{key}/subscriptions`
 
-### Token Validation
-- **POST** `/api/v1/tokens/validate` → Validate an access token (works for both clients and users).
+> [!NOTE]
+> The **access token** can be validated via:\
+> `POST /api/v1/tokens/validate`.
 
 ---
 
-Complete API documentation can be found in `swagger.json`.
+## :iphone: User Authentication
+
+### Single-Factor Authentication
+
+  **Access and refresh tokens** can be obtained using:\
+  `POST /api/v2/tokens`
+
+### Multi-Factor Authentication
+
+  1. An **OTP** can be requested via:\
+    `POST /api/v1/mfa/otp`
+  
+  2. The **OTP** can be exchanged for **access and refresh tokens** via:\
+     `POST /api/v3/tokens`
+
+> [!NOTE]
+> The **access token** can be validated via:\
+> `POST /api/v1/tokens/validate`.
+
+> [!TIP]
+> The **access token** can be refreshed via:\
+> `PUT /api/v2/tokens`
+
+---
+
+:gear: Complete API documentation can be found in [`swagger.json`](./swagger.json).
