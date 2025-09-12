@@ -13,7 +13,7 @@
   
   > [!NOTE]
   > The **access token** can be validated via:\
-  > `POST /api/v1/token/validation`.
+  > `POST /api/v1/token/status`.
   
 ---
 
@@ -38,7 +38,7 @@
   
   > [!NOTE]
   > The **access token** can be validated via:\
-  > `POST /api/v1/token/validation`.
+  > `POST /api/v1/token/status`.
   
   > [!TIP]
   > The **access token** can be refreshed via:\
