@@ -2,7 +2,7 @@
   "openapi": "3.0.4",
   "info": {
     "title": "Authentication API",
-    "description": "<p>\r\n    The API provides secure identity and access management. It supports <strong>user</strong> and <strong>client</strong> registration, update, deletion and retrieval with paginated report.\r\n</p>\r\n<ul>\r\n    <li>Use <code>POST /api/v1/tokens</code> for basic authorization to obtain <strong>access token</strong> for a <strong>client</strong>.</li>\r\n    </br>\r\n    <li>Use <code>POST /api/v2/tokens</code> for bearer authorization to obtain <strong>access and refresh token</strong> for an <strong>user</strong>. Use <code>PUT /api/v2/tokens</code> to refresh the <strong>access token</strong>.</li>\r\n    </br>\r\n    <li>Use <code>POST /api/v1/mfa/otp</code> to obtain <strong>OTP</strong> and then use it with <code>POST /api/v3/tokens</code> to obtain <strong>access and refresh token</strong> for a <strong>user</strong>.</li>\r\n    </br>\r\n    <li>Use <code>POST /api/v1/tokens/validate</code> to validate <strong>access token</strong> for both clients and users.</li>\r\n</ul>\r\n<p>\r\n    Note: To authenticate, external clients are required to activate a subscription using <code>/api/v1/clients/{key}/subscriptions</code>.\r\n</p>",
+    "description": "<p>The API provides secure identity and access management. It supports <strong>user</strong> and <strong>client</strong> registration, update, deletion and retrieval with paginated report.</p>\r\n<ul>\r\n    <li>Use <code>POST /api/v1/token</code> for basic authorization to obtain <strong>access token</strong> for a <strong>client</strong>.</li>\r\n    </br>\r\n    <li>Use <code>POST /api/v2/token</code> for bearer authorization to obtain <strong>access and refresh token</strong> for an <strong>user</strong>. Use <code>PUT /api/v2/token</code> to refresh the <strong>access token</strong>.</li>\r\n    </br>\r\n    <li>Use <code>POST /api/v1/mfa/otp</code> to obtain <strong>OTP</strong> and then use it with <code>POST /api/v3/token</code> to obtain <strong>access and refresh token</strong> for a <strong>user</strong>.</li>\r\n    </br>\r\n    <li>Use <code>POST /api/v1/token/validate</code> to validate <strong>access token</strong> for both clients and users.</li>\r\n</ul>\r\n<p><strong>Notes:</strong></p>\r\n<dl>\r\n    <dd>To authenticate, external clients are required to activate a subscription via <code>POST /api/v1/clients/{key}/subscriptions</code>.</dd>\r\n    </br>\r\n    <dd>To authenticate with MFA, users are required to verify their email via <code>POST /api/v1/email/verification/{token}</code>.</dd>\r\n</dl>",
     "contact": {
       "name": "Aleksandrina Razhenkova",
       "url": "https://github.com/a-razhenkova",
@@ -284,7 +284,7 @@
         }
       }
     },
-    "/api/v1/clients/{key}/secrets": {
+    "/api/v1/clients/{key}/secret": {
       "get": {
         "tags": [
           "Clients"
@@ -374,12 +374,12 @@
       }
     },
     "/api/v1/clients/{key}/subscriptions": {
-      "patch": {
+      "post": {
         "tags": [
           "Clients"
         ],
-        "summary": "Renews the subscription for a client.",
-        "operationId": "RenewClientSubscriptionAsync_V1",
+        "summary": "Adds new subscription for a client.",
+        "operationId": "AddNewClientSubscriptionAsync_V1",
         "parameters": [
           {
             "name": "key",
@@ -475,7 +475,7 @@
           "Clients"
         ],
         "summary": "Downloads the subscription contract for a specific client.",
-        "operationId": "DownloadCurrentClientContractAsync_V1",
+        "operationId": "DownloadClientSubscriptionContractAsync_V1",
         "parameters": [
           {
             "name": "key",
@@ -536,6 +536,48 @@
                 }
               }
             }
+          }
+        }
+      }
+    },
+    "/api/v1/email/verification/{token}": {
+      "post": {
+        "tags": [
+          "Email"
+        ],
+        "summary": "Verifies a user's email using the provided verification token.",
+        "operationId": "VerifyUserEmailVerificationAsync_V1",
+        "parameters": [
+          {
+            "name": "token",
+            "in": "path",
+            "description": "The email verification.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "X-Correlation-ID",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExceptionModel_V1"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK"
           }
         }
       }
@@ -693,12 +735,12 @@
         }
       }
     },
-    "/api/v3/tokens": {
+    "/api/v3/token": {
       "post": {
         "tags": [
-          "Tokens"
+          "Token"
         ],
-        "summary": "Creates an access token for user by the provided OTP.",
+        "summary": "Creates access and refresh tokens for user by the provided OTP.",
         "operationId": "CreateAccessTokenAsync_V3",
         "parameters": [
           {
@@ -743,12 +785,12 @@
         }
       }
     },
-    "/api/v2/tokens": {
+    "/api/v2/token": {
       "post": {
         "tags": [
-          "Tokens"
+          "Token"
         ],
-        "summary": "Creates an access token for users.",
+        "summary": "Creates access and refresh tokens for users.",
         "operationId": "CreateAccessTokenAsync_V2",
         "parameters": [
           {
@@ -794,7 +836,7 @@
       },
       "put": {
         "tags": [
-          "Tokens"
+          "Token"
         ],
         "summary": "Refreshes the access token for a user.",
         "operationId": "RefreshAccessTokenAsync_V2",
@@ -831,10 +873,10 @@
         }
       }
     },
-    "/api/v1/tokens": {
+    "/api/v1/token": {
       "post": {
         "tags": [
-          "Tokens"
+          "Token"
         ],
         "summary": "Creates an access token for clients.",
         "operationId": "CreateAccessTokenAsync_V1",
@@ -871,10 +913,10 @@
         }
       }
     },
-    "/api/v1/tokens/validate": {
+    "/api/v1/token/validation": {
       "post": {
         "tags": [
-          "Tokens"
+          "Token"
         ],
         "summary": "Validates the provided access token.",
         "operationId": "ValidateAccessTokenAsync_V1",
@@ -1269,6 +1311,48 @@
             }
           }
         },
+        "responses": {
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExceptionModel_V1"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/v1/users/{id}/email/verification": {
+      "post": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "Sends a verification email to the specified user.",
+        "operationId": "SendUserEmailVerificationAsync_V1",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "The external ID of the user to whom the verification email will be sent.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "X-Correlation-ID",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
         "responses": {
           "500": {
             "description": "Internal Server Error",
