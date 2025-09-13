@@ -12,7 +12,7 @@
         /// The environment.
         /// </summary>
         /// <example>Development</example>
-        public required string Enviroment { get; set; }
+        public required string Environment { get; set; }
 
         /// <summary>
         /// Server timestamp when the information was captured.
