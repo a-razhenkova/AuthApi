@@ -18,6 +18,7 @@ namespace WebApi.V1
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<IActionResult> VerifyUserEmailVerificationAsync(string token)
         {
+            // TODO: email verification
             return Ok();
         }
     }

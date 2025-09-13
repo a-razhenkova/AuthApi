@@ -10,7 +10,7 @@ namespace WebApi
 {
     public static class WebAppExtensions
     {
-        public static async Task<WebApplication> ApplyDbPendingMigrationsAndScriptsAsync(this WebApplication app, IConfiguration config)
+        public static async Task<WebApplication> ApplyDbPendingMigrationsAndScriptsAsync(this WebApplication app)
         {
             var dbOptions = app.Configuration.GetRequiredSection<DatabaseOptions>(nameof(AppSettingsOptions.Database));
 
@@ -30,7 +30,7 @@ namespace WebApi
             {
                 using (LogContext.PushProperty(LoggerContextProperty.ActionType.ToString(), LoggerContext.DbUp))
                 {
-                    authDbContext.ApplyDbPendingScriptsAsync(logger, config);
+                    authDbContext.ApplyDbPendingScriptsAsync(logger, app.Configuration);
                 }
             }
 

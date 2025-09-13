@@ -52,7 +52,7 @@ namespace WebApi.V1
         /// <summary>
         /// Checks the health of the application and its dependencies.
         /// </summary>
-        [HttpGet("check"), SkipLog]
+        [HttpGet("checks"), SkipLog]
         public async Task<IActionResult> CheckHealthAsync()
         {
             HealthReport healthReport = await _healthChecker.CheckHealthAsync();

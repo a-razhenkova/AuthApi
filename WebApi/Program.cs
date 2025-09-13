@@ -20,17 +20,17 @@ builder.AddSwagger();
 
 WebApplication app = builder.Build();
 app.UseHttpsRedirection();
-app.MapControllers();
 app.UseAuthentication();
 app.UseAuthorization();
 app.UseRateLimiter();
 
+app.MapControllers();
 app.UseSwagger();
 
 app.UseMiddleware<HttpMessageLoggingMiddleware>();
 app.UseMiddleware<ExceptionHandlingMiddleware>();
 app.UseMiddleware<HttpHeaderHandlingMiddleware>();
 
-await app.ApplyDbPendingMigrationsAndScriptsAsync(builder.Configuration);
+await app.ApplyDbPendingMigrationsAndScriptsAsync();
 
 await app.RunAsync();
