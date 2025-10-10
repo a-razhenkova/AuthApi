@@ -655,7 +655,7 @@
         }
       }
     },
-    "/api/v1/health/check": {
+    "/api/v1/health/checks": {
       "get": {
         "tags": [
           "Health"
@@ -1582,8 +1582,9 @@
       },
       "DeployInfoModel_V1": {
         "required": [
-          "enviroment",
-          "serverTimestamp",
+          "environment",
+          "machineName",
+          "machineTimestamp",
           "version"
         ],
         "type": "object",
@@ -1594,15 +1595,21 @@
             "nullable": true,
             "example": "1.0.0.0"
           },
-          "enviroment": {
+          "environment": {
             "type": "string",
-            "description": "The environment.",
+            "description": "The environment in which the application is running.",
             "nullable": true,
             "example": "Development"
           },
-          "serverTimestamp": {
+          "machineName": {
             "type": "string",
-            "description": "Server timestamp when the information was captured.",
+            "description": "The name of the machine where the application is deployed.",
+            "nullable": true,
+            "example": "TEST-123"
+          },
+          "machineTimestamp": {
+            "type": "string",
+            "description": "Timestamp of the machine when the information was captured.",
             "format": "date-time"
           }
         },
