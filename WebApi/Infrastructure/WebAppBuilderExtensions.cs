@@ -31,7 +31,7 @@ namespace WebApi
             DatabaseAttribute authDbConfig = typeof(AuthDbContext).GetRequiredCustomAttribute<DatabaseAttribute>();
             builder.Services.AddDbContext<AuthDbContext>(opt =>
             {
-                opt.UseSqlServer(builder.Configuration.GetConnectionString(authDbConfig.ConnectionStringName), cfg =>
+                opt.UseSqlServer(builder.Configuration.GetRequiredConnectionString(authDbConfig.ConnectionStringName), cfg =>
                 {
                     cfg.CommandTimeout(authDbConfig.CommandTimeoutInSeconds);
                     cfg.MigrationsAssembly(DatabaseAssembly.GetExecutingAssembly());

@@ -34,7 +34,6 @@ namespace WebApi.V1
         /// Retrieves information about the machine and build.
         /// </summary>
         /// <returns>Deploy details.</returns>
-        [AllowAnonymous]
         [HttpGet, SkipLog]
         [ProducesResponseType(typeof(DeployInfoModel), StatusCodes.Status200OK)]
         public IActionResult LoadDeployInfo()
@@ -42,8 +41,9 @@ namespace WebApi.V1
             var deployInfo = new DeployInfoModel()
             {
                 Version = WebApiAssembly.GetVersion(),
-                Enviroment = _environment.EnvironmentName,
-                ServerTimestamp = DateTime.Now,
+                Environment = _environment.EnvironmentName,
+                MachineName = Environment.MachineName,
+                MachineTimestamp = DateTime.Now
             };
 
             return Ok(deployInfo);

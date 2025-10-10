@@ -47,6 +47,6 @@ namespace WebApi
         }
 
         public static string GetRequiredConnectionString(this IConfiguration config, string connectionStringName)
-            => config.GetConnectionString(ConnectionStringNames.Redis) ?? throw new ArgumentNullException();
+            => config.GetConnectionString(connectionStringName) ?? throw new ArgumentNullException();
     }
 }

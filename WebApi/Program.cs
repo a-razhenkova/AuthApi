@@ -1,6 +1,6 @@
 using WebApi;
 
-WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
+var builder = WebApplication.CreateBuilder(args);
 builder.BindConfigurationSource();
 
 builder.AddLogger();
@@ -11,14 +11,14 @@ builder.AddMapper();
 builder.AddServices();
 builder.AddHealthChecks();
 
-builder.AddControllers();
 builder.AddAuthentication();
 builder.AddAuthorization();
 builder.AddRateLimiter();
 
+builder.AddControllers();
 builder.AddSwagger();
 
-WebApplication app = builder.Build();
+var app = builder.Build();
 app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();

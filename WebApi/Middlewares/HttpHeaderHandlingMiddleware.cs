@@ -13,10 +13,10 @@ namespace WebApi
 
         public async Task InvokeAsync(HttpContext httpContext)
         {
-            await _next(httpContext);
-
             httpContext.Response.Headers[HttpHeaders.RequestId] = httpContext.GetTraceId();
             httpContext.Response.Headers[HttpHeaders.CorrelationId] = httpContext.GetCorrelationId();
+
+            await _next(httpContext);
         }
     }
 }

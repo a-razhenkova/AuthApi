@@ -9,14 +9,20 @@
         public required string Version { get; set; }
 
         /// <summary>
-        /// The environment.
+        /// The environment in which the application is running.
         /// </summary>
         /// <example>Development</example>
         public required string Environment { get; set; }
 
         /// <summary>
-        /// Server timestamp when the information was captured.
+        /// The name of the machine where the application is deployed.
         /// </summary>
-        public required DateTime ServerTimestamp { get; set; }
+        /// <example>TEST-123</example>
+        public required string MachineName { get; set; }
+
+        /// <summary>
+        /// Timestamp of the machine when the information was captured.
+        /// </summary>
+        public required DateTime MachineTimestamp { get; set; }
     }
 }
