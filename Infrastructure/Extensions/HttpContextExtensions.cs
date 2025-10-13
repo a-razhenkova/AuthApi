@@ -14,24 +14,19 @@ namespace Infrastructure
 
         public static string GetCorrelationId(this HttpContext httpContext)
         {
-            string correlationId = string.Empty;
+            string? correlationId = null;
 
             if (httpContext.Request.Headers.TryGetValue(HttpHeaders.CorrelationId, out StringValues value))
             {
                 correlationId = value.FirstOrDefault() ?? string.Empty;
             }
 
-            if (string.IsNullOrWhiteSpace(correlationId))
-            {
-                correlationId = GetTraceId(httpContext);
-            }
-
-            return correlationId;
+            return string.IsNullOrWhiteSpace(correlationId) ? GetTraceId(httpContext) : correlationId;
         }
 
-        public static string GetAuthorization(this HttpContext httpContext)
+        public static string? GetAuthorization(this HttpContext httpContext)
         {
-            string authorization = string.Empty;
+            string? authorization = null;
 
             if (httpContext.Request.Headers.TryGetValue(HttpHeaders.Authorization, out StringValues value))
             {

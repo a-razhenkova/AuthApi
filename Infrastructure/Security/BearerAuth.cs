@@ -1,8 +1,7 @@
-﻿using Infrastructure;
-using Microsoft.IdentityModel.Tokens;
+﻿using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 
-namespace Business
+namespace Infrastructure
 {
     public static class BearerAuth
     {

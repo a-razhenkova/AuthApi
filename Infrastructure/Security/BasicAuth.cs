@@ -1,7 +1,6 @@
-﻿using Infrastructure;
-using System.Text;
+﻿using System.Text;
 
-namespace Business
+namespace Infrastructure
 {
     public static class BasicAuth
     {
