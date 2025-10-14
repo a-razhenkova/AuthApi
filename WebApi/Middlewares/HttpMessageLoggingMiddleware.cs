@@ -2,6 +2,7 @@
 using Serilog.Context;
 using System.Diagnostics;
 using System.Security.Claims;
+using System.Text.Json;
 
 namespace WebApi
 {
@@ -36,28 +37,93 @@ namespace WebApi
                     using var tempResponseBody = new MemoryStream();
                     httpContext.Response.Body = tempResponseBody;
 
-                    Stopwatch stopwatch = Stopwatch.StartNew();
+                    Stopwatch requestDuration = Stopwatch.StartNew();
                     await _next(httpContext);
-                    stopwatch.Stop();
+                    requestDuration.Stop();
 
                     string responseBody = await ReadBodyAsync(httpContext.Response.Body);
                     await tempResponseBody.CopyToAsync(originalResponseBody);
                     httpContext.Response.Body = originalResponseBody;
 
-                    SensitiveDataAttribute? sensitiveData = httpContext.GetEndpoint()?.Metadata?.GetMetadata<SensitiveDataAttribute>();
-
-                    _logger.LogInformation("Request finished: {@HttpAction}", new HttpAction()
-                    {
-                        FromIp = httpContext.GetIpAddresses() ?? "unknown",
-                        User = httpContext.User.FindFirstValue(TokenClaim.Username.GetDescription()) ?? "unauthorized",
-                        Duration = stopwatch.ElapsedMilliseconds,
-                        StatusCode = httpContext.Response.StatusCode,
-                        Method = httpContext.Request.Method,
-                        RequestData = sensitiveData is not null && sensitiveData.IsRequestSensitive ? Constants.SensitiveDataMask : requestBody,
-                        ResponseData = sensitiveData is not null && sensitiveData.IsResponseSensitive ? Constants.SensitiveDataMask : responseBody
-                    });
+                    LogAction(httpContext, requestBody, responseBody, requestDuration);
                 }
             }
+        }
+
+        private void LogAction(HttpContext httpContext, string requestBody, string responseBody, Stopwatch requestDuration)
+        {
+            SensitiveDataAttribute? sensitiveData = httpContext.GetEndpoint()?.Metadata?.GetMetadata<SensitiveDataAttribute>();
+
+            bool isSuccessStatusCode = httpContext.Response.StatusCode >= StatusCodes.Status200OK && httpContext.Response.StatusCode < StatusCodes.Status300MultipleChoices;
+            bool isRequestSensitive = sensitiveData is not null && sensitiveData.IsRequestSensitive;
+            bool isResponseSensitive = isSuccessStatusCode && sensitiveData is not null && sensitiveData.IsResponseSensitive;
+
+            var action = new HttpAction()
+            {
+                StatusCode = httpContext.Response.StatusCode,
+                Method = httpContext.Request.Method,
+                Duration = requestDuration.ElapsedMilliseconds,
+                FromIp = httpContext.GetIpAddresses(),
+                User = GetUser(httpContext, requestBody),
+                RequestData = isRequestSensitive ? null : requestBody,
+                ResponseData = isResponseSensitive ? null : responseBody
+            };
+
+            if (isSuccessStatusCode)
+            {
+                _logger.LogInformation("Request finished successful: {@HttpAction}", action);
+            }
+            else
+            {
+                _logger.LogError("Request finished with error: {@HttpAction}", action);
+            }
+        }
+
+        private static string? GetUser(HttpContext httpContext, string requestBody)
+        {
+            string? user = null;
+
+            try
+            {
+                string? authorization = httpContext.GetAuthorization();
+
+                bool hasAuthorization = !string.IsNullOrWhiteSpace(authorization);
+                bool hasCredentials = !hasAuthorization && !string.IsNullOrWhiteSpace(requestBody);
+
+                if (hasAuthorization)
+                {
+                    if (authorization.IsBasicAuth())
+                    {
+                        user = BasicAuth.Decode(authorization).Key;
+                    }
+                    else if (authorization.IsBearerAuth())
+                    {
+                        user = httpContext.User.FindFirstValue(TokenClaim.Username.GetDescription());
+
+                        if (string.IsNullOrWhiteSpace(user))
+                            user = httpContext.User.FindFirstValue(TokenClaim.ClientId.GetDescription());
+                    }
+                }
+                else if (hasCredentials)
+                {
+                    try
+                    {
+                        var credentials = JsonSerializer.Deserialize<V1.UserCredentialsModel>(requestBody) ?? throw new ArgumentNullException();
+                        user = credentials.Username;
+                    }
+                    catch
+                    {
+                        var credentials = JsonSerializer.Deserialize<V2.UserCredentialsModel>(requestBody) ?? throw new ArgumentNullException();
+                        user = credentials.Username;
+                    }
+                }
+            }
+            catch
+            {
+                // continue
+            }
+
+            return user;
         }
 
         private async Task<string> ReadBodyAsync(Stream body)

@@ -34,6 +34,8 @@ namespace Infrastructure
         // client
         [Description("clientId")]
         ClientId,
+        [Description("isInternalClient")]
+        IsInternalClient,
 
         // user
         [Description("userId")]

@@ -155,16 +155,13 @@ namespace WebApi
     </br>
     <li>Use <code>POST /api/v2/token</code> for bearer authorization to obtain <strong>access and refresh token</strong> for an <strong>user</strong>. Use <code>PUT /api/v2/token</code> to refresh the <strong>access token</strong>.</li>
     </br>
-    <li>Use <code>POST /api/v1/mfa/otp</code> to obtain <strong>OTP</strong> and then use it with <code>POST /api/v3/token</code> to obtain <strong>access and refresh token</strong> for a <strong>user</strong>.</li>
+    <li>Use <code>POST /api/v1/otp</code> to obtain <strong>one time password</strong> and then use it with <code>POST /api/v3/token</code> to obtain <strong>access and refresh token</strong> for a <strong>user</strong>.</li>
     </br>
     <li>Use <code>POST /api/v1/token/status</code> to validate <strong>access token</strong> for both clients and users.</li>
 </ul>
 <p><strong>Notes:</strong></p>
-<dl>
-    <dd>To authenticate, external clients are required to activate a subscription via <code>POST /api/v1/clients/{key}/subscriptions</code>.</dd>
-    </br>
-    <dd>To authenticate with MFA, users are required to verify their email via <code>POST /api/v1/email/verification/{token}</code>.</dd>
-</dl>",
+<p>To authenticate, external clients are required to activate a subscription via <code>POST /api/v1/clients/{key}/subscriptions</code>.<p>
+<p>To authenticate with MFA, users are required to verify their email via <code>POST /api/v1/email/verification/{token}</code>.</p>",
                 Version = $"{WebApiAssembly.GetVersion()}",
                 Contact = new OpenApiContact()
                 {

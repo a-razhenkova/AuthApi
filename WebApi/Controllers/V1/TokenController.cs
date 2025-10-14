@@ -28,7 +28,12 @@ namespace WebApi.V1
         [ProducesResponseType(typeof(TokenModel), StatusCodes.Status200OK)]
         public async Task<IActionResult> CreateAccessTokenAsync()
         {
-            TokenDto token = await _authenticator.CreateAccessTokenAsync(HttpContext.GetAuthorization());
+            string? authorization = HttpContext.GetAuthorization();
+
+            if (string.IsNullOrWhiteSpace(authorization))
+                throw new UnauthorizedException();
+
+            TokenDto token = await _authenticator.CreateAccessTokenAsync(authorization);
             return Ok(_mapper.Map<TokenModel>(token));
         }
 

@@ -5,11 +5,11 @@ using Microsoft.AspNetCore.Mvc;
 namespace WebApi.V1
 {
     [Route("api/v1/[controller]")]
-    public class MfaController : JsonApiControllerBase
+    public class OtpController : JsonApiControllerBase
     {
         private readonly IAuthenticator _authenticator;
 
-        public MfaController(IAuthenticator authenticator)
+        public OtpController(IAuthenticator authenticator)
         {
             _authenticator = authenticator;
         }
@@ -20,7 +20,7 @@ namespace WebApi.V1
         /// <param name="userCredentials">User authentication credentials.</param>
         /// <returns>The user's external ID associated with the generated OTP.</returns>
         [AllowAnonymous]
-        [HttpPost("otp")]
+        [HttpPost]
         [ProducesResponseType(typeof(SimpleResponseModel<string>), StatusCodes.Status200OK)]
         public async Task<IActionResult> CreateOtpAsync(UserCredentialsModel userCredentials)
         {

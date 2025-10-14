@@ -19,10 +19,39 @@ namespace WebApi
 {
     public static class WebAppBuilderExtensions
     {
-        public static WebApplicationBuilder AddCache(this WebApplicationBuilder builder)
+        public static WebApplicationBuilder AddHealthChecks(this WebApplicationBuilder builder)
         {
-            builder.Services.AddStackExchangeRedisCache(opt => opt.Configuration = builder.Configuration.GetRequiredConnectionString(ConnectionStringNames.Redis));
-            builder.Services.AddScoped<IRedisProvider, RedisProxy>();
+            var databaseOptions = builder.Configuration.GetRequiredSection<DatabaseOptions>(nameof(AppSettingsOptions.Database));
+
+            builder.Services.AddHealthChecks()
+                            .AddDbContextCheck<AuthDbContext>("Authentication Database", tags: [HealthCheckImpactTag.Critical.ToString()])
+                            .AddRedis(builder.Configuration.GetRequiredConnectionString(ConnectionStringNames.Redis), name: "Redis", tags: [HealthCheckImpactTag.Medium.ToString()]);
+
+            return builder;
+        }
+
+        public static MapperConfiguration CreateMapperConfig()
+        {
+            var mapperConfig = new MapperConfiguration(cfg =>
+            {
+                cfg.AddProfile(new AuthDbMapperProfile());
+
+                cfg.AddProfile(new V1.CommonMapperProfile());
+                cfg.AddProfile(new V2.CommonMapperProfile());
+            });
+
+            mapperConfig.AssertConfigurationIsValid();
+
+            return mapperConfig;
+        }
+
+        public static WebApplicationBuilder AddMapper(this WebApplicationBuilder builder)
+        {
+            MapperConfiguration mapperConfig = CreateMapperConfig();
+
+            IMapper mapper = mapperConfig.CreateMapper();
+            builder.Services.AddSingleton(mapper);
+
             return builder;
         }
 
@@ -47,44 +76,10 @@ namespace WebApi
             return builder;
         }
 
-        public static WebApplicationBuilder AddMapper(this WebApplicationBuilder builder)
+        public static WebApplicationBuilder AddCache(this WebApplicationBuilder builder)
         {
-            MapperConfiguration mapperConfig = CreateMapperConfig();
-
-            IMapper mapper = mapperConfig.CreateMapper();
-            builder.Services.AddSingleton(mapper);
-
-            return builder;
-        }
-
-        public static MapperConfiguration CreateMapperConfig()
-        {
-            var mapperConfig = new MapperConfiguration(cfg =>
-            {
-                cfg.AddProfile(new AuthDbMapperProfile());
-
-                cfg.AddProfile(new V1.CommonMapperProfile());
-                cfg.AddProfile(new V2.CommonMapperProfile());
-            });
-
-            mapperConfig.AssertConfigurationIsValid();
-
-            return mapperConfig;
-        }
-
-        public static WebApplicationBuilder AddControllers(this WebApplicationBuilder builder)
-        {
-            builder.Services.AddControllers()
-                            .AddJsonOptions(opt =>
-                            {
-                                opt.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter(JsonNamingPolicy.SnakeCaseUpper));
-                            })
-                            .ConfigureApiBehaviorOptions(opt =>
-                            {
-                                opt.InvalidModelStateResponseFactory = actionContext => CreateInvalidModelResponse(actionContext);
-                            });
-            builder.Services.AddRouting(opt => opt.LowercaseUrls = true);
-
+            builder.Services.AddStackExchangeRedisCache(opt => opt.Configuration = builder.Configuration.GetRequiredConnectionString(ConnectionStringNames.Redis));
+            builder.Services.AddScoped<IRedisProvider, RedisProxy>();
             return builder;
         }
 
@@ -131,6 +126,22 @@ namespace WebApi
                     });
                 });
             });
+
+            return builder;
+        }
+
+        public static WebApplicationBuilder AddControllers(this WebApplicationBuilder builder)
+        {
+            builder.Services.AddControllers()
+                            .AddJsonOptions(opt =>
+                            {
+                                opt.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter(JsonNamingPolicy.SnakeCaseUpper));
+                            })
+                            .ConfigureApiBehaviorOptions(opt =>
+                            {
+                                opt.InvalidModelStateResponseFactory = actionContext => CreateInvalidModelResponse(actionContext);
+                            });
+            builder.Services.AddRouting(opt => opt.LowercaseUrls = true);
 
             return builder;
         }

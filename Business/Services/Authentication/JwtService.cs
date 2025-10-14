@@ -22,6 +22,8 @@ namespace Business
         {
             return CreateJwt(_appSettingsOptions.Security.AccessToken,
             [
+                new Claim(TokenClaim.ClientId.GetDescription(), client.Key),
+                new Claim(TokenClaim.IsInternalClient.GetDescription(), client.IsInternal ? "true" : "false"),
                 new Claim(TokenClaim.CanNotifyParty.GetDescription(), client.Right.CanNotifyParty ? "true" : "false"),
             ]);
         }

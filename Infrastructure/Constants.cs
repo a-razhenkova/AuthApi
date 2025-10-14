@@ -9,7 +9,6 @@
         public const int OneTimePasswordLength = 6;
 
         public const string SerilogOutputTemplate = "> {Timestamp:dd.MM.yyyy HH:mm:ss.fff} - {Level:u3}|{MachineName}(v.{Version})|{SourceContext}{NewLine}[{Properties}]{NewLine}Message:{Message:lj}{NewLine}{Exception}";
-        public const string SensitiveDataMask = "******";
         
         public const string FreeTextRegex = @"^[a-zA-Z\d\s\-.!?()]*$";
     }
