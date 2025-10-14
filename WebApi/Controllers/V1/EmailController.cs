@@ -1,8 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Infrastructure;
+using Microsoft.AspNetCore.Mvc;
 
 namespace WebApi.V1
 {
-    [AuthorizeUser(Infrastructure.UserRoles.Administrator)]
+    [AuthorizeUser(UserRoles.Administrator)]
     [Route("api/v1/[controller]")]
     public class EmailController : JsonApiControllerBase
     {

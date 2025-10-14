@@ -29,9 +29,14 @@ namespace WebApi
                 foreach (var allowedRoles in requirement.AllowedRoles)
                 {
                     string[] roles = allowedRoles.Split(",", StringSplitOptions.TrimEntries);
+
                     if (roles.Any(src => src.Equals(userRole)))
                         context.Succeed(requirement);
                 }
+            }
+            else if (context.User.FindFirstValue(TokenClaim.IsInternalClient.GetDescription()) == "true")
+            {
+                context.Succeed(requirement);
             }
         }
     }

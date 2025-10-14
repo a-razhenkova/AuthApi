@@ -1,11 +1,12 @@
 ﻿using Business;
+using Infrastructure;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 
 namespace WebApi.V1
 {
-    [AuthorizeUser(Infrastructure.UserRoles.Administrator)]
+    [AuthorizeUser(UserRoles.Administrator)]
     [Route("api/v1/[controller]")]
     public class HealthController : JsonApiControllerBase
     {

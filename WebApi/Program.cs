@@ -1,7 +1,7 @@
 using WebApi;
 
 var builder = WebApplication.CreateBuilder(args);
-builder.BindConfigurationSource();
+builder.BindConfigurationSources();
 
 builder.AddLogger();
 builder.AddCache();

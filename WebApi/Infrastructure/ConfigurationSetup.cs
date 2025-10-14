@@ -5,7 +5,7 @@ namespace WebApi
 {
     public static class ConfigurationSetup
     {
-        public static WebApplicationBuilder BindConfigurationSource(this WebApplicationBuilder builder)
+        public static WebApplicationBuilder BindConfigurationSources(this WebApplicationBuilder builder)
         {
             builder.Configuration.Sources.Clear();
             builder.Configuration.AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)

@@ -23,7 +23,7 @@ namespace WebApi.V1
             CreateUserMaps();
         }
 
-        public void CreatClientMaps()
+        private void CreatClientMaps()
         {
             CreateMap<ClientRegistrationModel, ClientDto>()
                 .ForMember(dest => dest.Key, opt => opt.Ignore())
@@ -53,7 +53,7 @@ namespace WebApi.V1
             CreateMap<PaginatedReport<ClientDto>, PaginatedReport<ClientModel>>();
         }
 
-        public void CreateUserMaps()
+        private void CreateUserMaps()
         {
             CreateMap<UserRegistrationModel, UserDto>()
                 .ForMember(dest => dest.ExternalId, opt => opt.Ignore())
