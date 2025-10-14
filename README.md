@@ -27,7 +27,7 @@
 ### Multi-Factor Authentication
   
   1. An **OTP** can be requested via:\
-    `POST /api/v1/mfa/otp`
+    `POST /api/v1/otp`
   
   2. The **OTP** can be exchanged for **access and refresh tokens** via:\
      `POST /api/v3/token`
