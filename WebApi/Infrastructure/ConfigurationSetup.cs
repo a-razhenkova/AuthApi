@@ -29,8 +29,8 @@ namespace WebApi
                     config.Database.Validate();
                     config.PaginatedReport.Validate();
 
-                    config.InternalServices.Validate();
-                    config.InternalServices.NotifyApi.Validate();
+                    config.ExternalServices.Validate();
+                    config.ExternalServices.NotifyApi.Validate();
                     return true;
                 })
                 .ValidateOnStart();

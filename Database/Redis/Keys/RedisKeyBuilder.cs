@@ -29,7 +29,7 @@ namespace Database
             {
                 case RedisKey.OneTimePassword:
                     {
-                        return GetId<string>((int)TwoFactorAuthIds.ExternalUserId);
+                        return GetRequiredId<string>(TwoFactorAuthIds.ExternalUserId);
                     }
                 default:
                     {
@@ -38,7 +38,13 @@ namespace Database
             }
         }
 
-        private TId GetId<TId>(int index)
-            => (TId)(_keyIds?[index] ?? throw new InvalidOperationException());
+        private TId GetRequiredId<TId>(Enum value)
+            => GetId<TId>(value) ?? throw new InvalidOperationException();
+
+        private TId? GetId<TId>(Enum value)
+        {
+            int index = Convert.ToInt32(value);
+            return (TId)(_keyIds?[index]);
+        }
     }
 }

@@ -2,7 +2,7 @@
 
 namespace Infrastructure.Configuration.AppSettings
 {
-    public record InternalServicesOptions
+    public record ExternalServicesOptions
     {
         public NotifyApiOptions NotifyApi { get; init; } = new();
     }

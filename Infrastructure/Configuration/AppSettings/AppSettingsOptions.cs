@@ -15,7 +15,7 @@ namespace Infrastructure.Configuration.AppSettings
 
         public PaginatedReportOptions PaginatedReport { get; init; } = new();
 
-        public InternalServicesOptions InternalServices { get; init; } = new();
+        public ExternalServicesOptions ExternalServices { get; init; } = new();
     }
 
     public record PaginatedReportOptions
