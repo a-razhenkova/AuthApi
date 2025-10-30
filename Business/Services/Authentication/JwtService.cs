@@ -23,8 +23,8 @@ namespace Business
             return CreateJwt(_appSettingsOptions.Security.AccessToken,
             [
                 new Claim(TokenClaim.ClientId.GetDescription(), client.Key),
-                new Claim(TokenClaim.IsInternalClient.GetDescription(), client.IsInternal ? "true" : "false"),
-                new Claim(TokenClaim.CanNotifyParty.GetDescription(), client.Right.CanNotifyParty ? "true" : "false"),
+                new Claim(TokenClaim.IsInternalClient.GetDescription(), client.IsInternal.ToString(), ClaimValueTypes.Boolean),
+                new Claim(TokenClaim.CanNotifyParty.GetDescription(), client.Right.CanNotifyParty.ToString(), ClaimValueTypes.Boolean),
             ]);
         }
 
@@ -106,7 +106,7 @@ namespace Business
                 audience: _appSettingsOptions.Security.TokenAudience,
                 claims: claims,
                 notBefore: currentTimestamp,
-                expires: currentTimestamp.AddSeconds(tokenOptions.LifetimeSeconds),
+                expires: currentTimestamp.AddSeconds(tokenOptions.LifetimeInSeconds),
                 issuedAt: currentTimestamp);
 
             var token = new JwtSecurityToken(header, payload);

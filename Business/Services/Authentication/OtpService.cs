@@ -38,7 +38,7 @@ namespace Business
                 WrongAuthAttemptsCounter = 0
             };
 
-            var cacheEntryOptions = new DistributedCacheEntryOptions().SetAbsoluteExpiration(TimeSpan.FromSeconds(_appSettingsOptions.Security.MultiFactorAuth.LifetimeSeconds));
+            var cacheEntryOptions = new DistributedCacheEntryOptions().SetAbsoluteExpiration(TimeSpan.FromSeconds(_appSettingsOptions.Security.MultiFactorAuth.LifetimeInSeconds));
             await _redis.AddOrUpdateAsync(RedisKey.OneTimePassword, otpDto, cacheEntryOptions, keyIds: user.ExternalId);
 
             // TODO: send OTP to user via email

@@ -46,13 +46,13 @@ namespace Infrastructure.Configuration.AppSettings
         public string Key { get; init; } = string.Empty;
 
         [Range(minimum: 1, maximum: int.MaxValue)]
-        public int LifetimeSeconds { get; init; }
+        public int LifetimeInSeconds { get; init; }
     }
 
     public record MultiFactorAuthOptions
     {
         [Range(minimum: 1, maximum: int.MaxValue)]
-        public int LifetimeSeconds { get; init; } = 30;
+        public int LifetimeInSeconds { get; init; } = 30;
 
         [Range(minimum: 1, maximum: int.MaxValue)]
         public int DefaultMaxWrongLoginAttemptsBeforeBlock { get; init; } = 3;

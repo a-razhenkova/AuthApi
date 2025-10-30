@@ -31,7 +31,10 @@ namespace WebApi
                 using (LogContext.PushProperty(LoggerContextProperty.CorrelationId.ToString(), httpContext.GetCorrelationId()))
                 {
                     httpContext.Request.EnableBuffering();
-                    string requestBody = await ReadBodyAsync(httpContext.Request.Body);
+                    string? requestBody = await ReadBodyAsync(httpContext.Request.Body);
+
+                    if (string.IsNullOrWhiteSpace(requestBody))
+                        requestBody = null;
 
                     using Stream originalResponseBody = httpContext.Response.Body;
                     using var tempResponseBody = new MemoryStream();
@@ -41,16 +44,19 @@ namespace WebApi
                     await _next(httpContext);
                     requestDuration.Stop();
 
-                    string responseBody = await ReadBodyAsync(httpContext.Response.Body);
+                    string? responseBody = await ReadBodyAsync(httpContext.Response.Body);
                     await tempResponseBody.CopyToAsync(originalResponseBody);
                     httpContext.Response.Body = originalResponseBody;
+
+                    if (string.IsNullOrWhiteSpace(responseBody))
+                        responseBody = null;
 
                     LogAction(httpContext, requestBody, responseBody, requestDuration);
                 }
             }
         }
 
-        private void LogAction(HttpContext httpContext, string requestBody, string responseBody, Stopwatch requestDuration)
+        private void LogAction(HttpContext httpContext, string? requestBody, string? responseBody, Stopwatch requestDuration)
         {
             SensitiveDataAttribute? sensitiveData = httpContext.GetEndpoint()?.Metadata?.GetMetadata<SensitiveDataAttribute>();
 
@@ -79,7 +85,7 @@ namespace WebApi
             }
         }
 
-        private static string? GetUser(HttpContext httpContext, string requestBody)
+        private static string? GetUser(HttpContext httpContext, string? requestBody)
         {
             string? user = null;
 
@@ -87,10 +93,7 @@ namespace WebApi
             {
                 string? authorization = httpContext.GetAuthorization();
 
-                bool hasAuthorization = !string.IsNullOrWhiteSpace(authorization);
-                bool hasCredentials = !hasAuthorization && !string.IsNullOrWhiteSpace(requestBody);
-
-                if (hasAuthorization)
+                if (!string.IsNullOrWhiteSpace(authorization))
                 {
                     if (authorization.IsBasicAuth())
                     {
@@ -104,16 +107,16 @@ namespace WebApi
                             user = httpContext.User.FindFirstValue(TokenClaim.ClientId.GetDescription());
                     }
                 }
-                else if (hasCredentials)
+                else if (!string.IsNullOrWhiteSpace(requestBody))
                 {
                     try
                     {
-                        var credentials = JsonSerializer.Deserialize<V1.UserCredentialsModel>(requestBody) ?? throw new ArgumentNullException();
+                        var credentials = JsonSerializer.Deserialize<V1.UserCredentialsModel>(requestBody) ?? throw new ArgumentException();
                         user = credentials.Username;
                     }
                     catch
                     {
-                        var credentials = JsonSerializer.Deserialize<V2.UserCredentialsModel>(requestBody) ?? throw new ArgumentNullException();
+                        var credentials = JsonSerializer.Deserialize<V2.UserCredentialsModel>(requestBody) ?? throw new ArgumentException();
                         user = credentials.Username;
                     }
                 }

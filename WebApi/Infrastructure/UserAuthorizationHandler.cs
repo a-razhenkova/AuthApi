@@ -23,8 +23,13 @@ namespace WebApi
         private static void ValidateUserRole(AuthorizationHandlerContext context, RolesAuthorizationRequirement requirement)
         {
             string? userRole = context.User.FindFirstValue(TokenClaim.UserRole.GetDescription());
+            bool.TryParse(context.User.FindFirstValue(TokenClaim.IsInternalClient.GetDescription()), out bool isInternalClient);
 
-            if (!string.IsNullOrWhiteSpace(userRole))
+            if (isInternalClient)
+            {
+                context.Succeed(requirement);
+            }
+            else if (!string.IsNullOrWhiteSpace(userRole))
             {
                 foreach (var allowedRoles in requirement.AllowedRoles)
                 {
@@ -33,10 +38,6 @@ namespace WebApi
                     if (roles.Any(src => src.Equals(userRole)))
                         context.Succeed(requirement);
                 }
-            }
-            else if (context.User.FindFirstValue(TokenClaim.IsInternalClient.GetDescription()) == "true")
-            {
-                context.Succeed(requirement);
             }
         }
     }

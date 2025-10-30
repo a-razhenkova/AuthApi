@@ -9,10 +9,10 @@
 
     public enum UserStatuses
     {
-        Active = 0,
-        Restricted = 1,
+        Disabled = 0,
+        Active = 1,
         Blocked = 2,
-        Disabled = 3
+        Restricted = 3
     }
 
     public enum UserStatusReasons

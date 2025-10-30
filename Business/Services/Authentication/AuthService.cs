@@ -67,7 +67,7 @@ namespace Business
 
         public async Task<TokenValidationResult> ValidateAccessTokenAsync()
         {
-            string authorization = _httpContextAccessor.HttpContext.GetAuthorization();
+            string? authorization = _httpContextAccessor.HttpContext.GetAuthorization();
             if (string.IsNullOrWhiteSpace(authorization))
                 throw new UnauthorizedException();
 
@@ -76,7 +76,7 @@ namespace Business
 
         public async Task<TokenDto> RefreshAccessTokenAsync()
         {
-            string authorization = _httpContextAccessor.HttpContext.GetAuthorization();
+            string? authorization = _httpContextAccessor.HttpContext.GetAuthorization();
             if (string.IsNullOrWhiteSpace(authorization))
                 throw new UnauthorizedException();
 

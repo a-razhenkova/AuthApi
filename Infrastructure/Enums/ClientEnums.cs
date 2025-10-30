@@ -2,9 +2,9 @@
 {
     public enum ClientStatuses
     {
-        Active = 0,
-        Blocked = 1,
-        Disabled = 2,
+        Disabled = 0,
+        Active = 1,
+        Blocked = 2
     }
 
     public enum ClientStatusReasons

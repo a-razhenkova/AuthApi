@@ -1,3 +1,5 @@
+DECLARE @userId INT = 1
+
 BEGIN TRY
 	BEGIN TRANSACTION T1
 
@@ -13,8 +15,8 @@ BEGIN TRY
 
 	INSERT INTO [dbo].[user_status]
 	SELECT NULL AS [version],
-		   1 AS [user_id],
-		   0 /* Active */ AS [status],
+		   @userId AS [user_id],
+		   1 /* Active */ AS [status],
 		   0 /* None */ AS [reason],
 		   NULL AS [note]
 
@@ -27,7 +29,7 @@ BEGIN TRY
 
 	INSERT INTO [dbo].[login]
 	SELECT NULL AS [version],
-		   1 AS [user_id],
+		   @userId AS [user_id],
 		   0 AS [wrong_login_attempts_counter],
 		   NULL AS [last_login_timestamp],
 		   NULL AS [last_login_ip_address]
@@ -37,4 +39,4 @@ END TRY
 BEGIN CATCH
 	ROLLBACK TRANSACTION T1;
 	THROW;
-END CATCH 
+END CATCH
