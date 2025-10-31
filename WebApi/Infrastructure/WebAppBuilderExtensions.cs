@@ -13,6 +13,7 @@ using System.Diagnostics;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using System.Text.RegularExpressions;
 using System.Threading.RateLimiting;
 
 namespace WebApi
@@ -21,11 +22,15 @@ namespace WebApi
     {
         public static WebApplicationBuilder AddHealthChecks(this WebApplicationBuilder builder)
         {
-            var databaseOptions = builder.Configuration.GetRequiredSection<DatabaseOptions>(nameof(AppSettingsOptions.Database));
+            string authDbConnectionString = builder.Configuration.GetRequiredConnectionString(ConnectionStringNames.AuthDb);
+            string authDbCheckName = Regex.Match(authDbConnectionString, @"^Server=[^;]+;Database=[^;]+;").Value;
+
+            string redisConnectionString = builder.Configuration.GetRequiredConnectionString(ConnectionStringNames.Redis);
+            string redisCheckName = Regex.Match(redisConnectionString, @"^[^,]+").Value;
 
             builder.Services.AddHealthChecks()
-                            .AddDbContextCheck<AuthDbContext>("Authentication Database", tags: [HealthCheckImpactTag.Critical.ToString()])
-                            .AddRedis(builder.Configuration.GetRequiredConnectionString(ConnectionStringNames.Redis), name: "Redis", tags: [HealthCheckImpactTag.Medium.ToString()]);
+                            .AddDbContextCheck<AuthDbContext>($"AuthDb ({authDbCheckName})", tags: [HealthCheckImpactTag.Critical.ToString()])
+                            .AddRedis(redisConnectionString, name: $"Redis ({redisCheckName})", tags: [HealthCheckImpactTag.Medium.ToString()], timeout: TimeSpan.FromSeconds(2));
 
             return builder;
         }
