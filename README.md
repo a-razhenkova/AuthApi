@@ -1,4 +1,4 @@
-# :closed_lock_with_key: How to use
+# :closed_lock_with_key: How to Authenticate
 
 ## :computer: Client Authentication
   
@@ -52,18 +52,29 @@
 
 # Architecture & Design
 
-SDK: .NET Core 9\
-Database: MSSQL 2022
+> SDK: .NET Core 9\
+> Database: SQL Server 2022\
+> Caching: Redis
 
 > [!NOTE]
 > The application follows a layered achitecture.
 
 ## Client Single-Factor Authentication
 1. Client credentials are received in the `Authorization` header using the format:  
-   `Basic <base64_encoded_key>:<base64_encoded_secret>`.
+   `Basic <base64_encoded_key>:<base64_encoded_secret>`
 2. The credentials from the header are decoded.
 3. A database query is executed to fetch client data using the provided `key`.
 4. If the `key` exists, the `client status` is validated.
-5. If the `client status` is acceptable, the stored `secret` is compared with the provided secret.
-6. If the `secret` is valid, the `failed login attempt counter` is reset.
-7. A JWT `access token` is generated, scoped to the `client ID` and the applications the client is allowed to access.
+5. If the `client status` is acceptable, the system checks for an activeactive `subscription`.
+6. If there is an active `subscription`, the stored `secret` is compared with the provided secret.
+7. If the `secret` is valid, the `failed login attempt counter` is reset.
+8. A JWT `access token` is generated, scoped to the `client ID` and the applications the client is allowed to access.
+
+> [!IMPORTANT]
+> Invalid `key` or `secret` results in HTTP status code `401 Unauthorized`.
+
+> [!IMPORTANT]
+> Invalid `client status` or missing active `subscription` results in HTTP status code `403 Forbidden`.
+
+> [!IMPORTANT]
+> If the `failed login attempt counter` exceeds the allowed limit, the `client status` is updated to `BLOCKED`.
