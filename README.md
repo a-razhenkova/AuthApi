@@ -52,7 +52,7 @@
 
 # :triangular_ruler: Architecture & Design
 
-![Architecture Diagram](/assest/architecture-diagram.png)
+![Architecture Diagram](/assets/architecture-diagram.png)
 
 > SDK: .NET Core 9\
 > Database: SQL Server 2022\
