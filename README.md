@@ -52,6 +52,8 @@
 
 # Architecture & Design
 
+![Alt text here](architecture-diagram.png)
+
 > SDK: .NET Core 9\
 > Database: SQL Server 2022\
 > Caching: Redis
