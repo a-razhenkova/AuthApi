@@ -1,4 +1,4 @@
-# :closed_lock_with_key: How to Authenticate
+# :closed_lock_with_key: How to use
 
 ## :computer: Client Authentication
   
@@ -47,3 +47,23 @@
 ---
 
 :gear: Complete API documentation can be found in [`swagger.json`](./swagger.json).
+
+---
+
+# Architecture & Design
+
+SDK: .NET Core 9\
+Database: MSSQL 2022
+
+> [!NOTE]
+> The application follows a layered achitecture.
+
+## Client Single-Factor Authentication
+1. Client credentials are received in the `Authorization` header using the format:  
+   `Basic <base64_encoded_key>:<base64_encoded_secret>`.
+2. The credentials from the header are decoded.
+3. A database query is executed to fetch client data using the provided `key`.
+4. If the `key` exists, the `client status` is validated.
+5. If the `client status` is acceptable, the stored `secret` is compared with the provided secret.
+6. If the `secret` is valid, the `failed login attempt counter` is reset.
+7. A JWT `access token` is generated, scoped to the `client ID` and the applications the client is allowed to access.
