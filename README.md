@@ -46,13 +46,13 @@
   
 ---
 
-:gear: Complete API documentation can be found in [`swagger.json`](./swagger.json).
+:gear: Complete API documentation can be found in [`swagger.json`](/assets/swagger.json).
 
 ---
 
 # :triangular_ruler: Architecture & Design
 
-![Alt text here](architecture-diagram.png)
+![Architecture Diagram](/assest/architecture-diagram.png)
 
 > SDK: .NET Core 9\
 > Database: SQL Server 2022\
