@@ -55,8 +55,7 @@
 ![Architecture Diagram](/assets/architecture-diagram.png)
 
 > SDK: .NET Core 9\
-> Database: SQL Server 2022\
-> Caching: Redis
+> Database: SQL Server 2022
 
 > [!NOTE]
 > The application follows a layered achitecture.
