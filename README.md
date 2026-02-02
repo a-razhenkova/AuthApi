@@ -50,7 +50,7 @@
 
 ---
 
-# Architecture & Design
+# :triangular_ruler: Architecture & Design
 
 ![Alt text here](architecture-diagram.png)
 
@@ -72,11 +72,11 @@
 7. If the `secret` is valid, the `failed login attempt counter` is reset.
 8. A JWT `access token` is generated, scoped to the `client ID` and the applications the client is allowed to access.
 
-> [!IMPORTANT]
+> [!WARNING]
 > Invalid `key` or `secret` results in HTTP status code `401 Unauthorized`.
 
-> [!IMPORTANT]
+> [!WARNING]
 > Invalid `client status` or missing active `subscription` results in HTTP status code `403 Forbidden`.
 
-> [!IMPORTANT]
+> [!CAUTION]
 > If the `failed login attempt counter` exceeds the allowed limit, the `client status` is updated to `BLOCKED`.
