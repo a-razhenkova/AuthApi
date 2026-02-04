@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Database.AuthDb.DefaultSchema
+namespace Database.IdentityDb.DefaultSchema
 {
     [Table("client_subscription", Schema = DefaultSchemaSettings.SchemaName)]
     public class ClientSubscription : EntityBase

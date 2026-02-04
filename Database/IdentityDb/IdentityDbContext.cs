@@ -1,12 +1,12 @@
 ﻿using Infrastructure;
 using Microsoft.EntityFrameworkCore;
 
-namespace Database.AuthDb
+namespace Database.IdentityDb
 {
-    [Database(ConnectionStringNames.AuthDb)]
-    public class AuthDbContext : DbContext
+    [Database(ConnectionStringNames.IdentityDb)]
+    public class IdentityDbContext : DbContext
     {
-        public AuthDbContext(DbContextOptions<AuthDbContext> options) 
+        public IdentityDbContext(DbContextOptions<IdentityDbContext> options) 
             : base(options)
         {
 

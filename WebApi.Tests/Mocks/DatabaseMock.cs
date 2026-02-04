@@ -1,4 +1,4 @@
-﻿using Database.AuthDb;
+﻿using Database.IdentityDb;
 using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
 
@@ -6,15 +6,15 @@ namespace WebApi.Tests
 {
     public static class DatabaseMock
     {
-        public static AuthDbContext GetAuthDbContext()
+        public static IdentityDbContext GetAuthDbContext()
         {
-            var options = new DbContextOptionsBuilder<AuthDbContext>()
+            var options = new DbContextOptionsBuilder<IdentityDbContext>()
                 .UseInMemoryDatabase(Guid.NewGuid().ToString())
                 .LogTo(src => Debug.WriteLine(src))
                 .EnableSensitiveDataLogging()
                 .Options;
 
-            return new AuthDbContext(options);
+            return new IdentityDbContext(options);
         }
     }
 }

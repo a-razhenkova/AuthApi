@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
-using Database.AuthDb;
-using Database.AuthDb.DefaultSchema;
+using Database.IdentityDb;
+using Database.IdentityDb.DefaultSchema;
 using Infrastructure;
 using Infrastructure.Configuration.AppSettings;
 using Microsoft.AspNetCore.Http;
@@ -13,12 +13,12 @@ namespace Business
     public class ClientService : IClientHandler
     {
         private readonly AppSettingsOptions _appSettingsOptions;
-        private readonly AuthDbContext _authDbContext;
+        private readonly IdentityDbContext _authDbContext;
         private readonly IMapper _mapper;
         private readonly IReportHandler _reportHandler;
 
         public ClientService(IOptionsSnapshot<AppSettingsOptions> appSettingsOptions,
-                            AuthDbContext authDbContext,
+                            IdentityDbContext authDbContext,
                             IMapper mapper,
                             IReportHandler reportHandler)
         {

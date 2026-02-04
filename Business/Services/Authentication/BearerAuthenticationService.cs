@@ -1,5 +1,5 @@
-﻿using Database.AuthDb;
-using Database.AuthDb.DefaultSchema;
+﻿using Database.IdentityDb;
+using Database.IdentityDb.DefaultSchema;
 using Infrastructure;
 using Infrastructure.Configuration.AppSettings;
 using Microsoft.AspNetCore.Http;
@@ -13,11 +13,11 @@ namespace Business
     {
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly AppSettingsOptions _appSettingsOptions;
-        private readonly AuthDbContext _authDbContext;
+        private readonly IdentityDbContext _authDbContext;
 
         public BearerAuthenticationService(IHttpContextAccessor httpContextAccessor,
                                           IOptionsSnapshot<AppSettingsOptions> appSettingsOptions,
-                                          AuthDbContext authDbContext)
+                                          IdentityDbContext authDbContext)
         {
             _httpContextAccessor = httpContextAccessor;
             _appSettingsOptions = appSettingsOptions.Value;

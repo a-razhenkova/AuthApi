@@ -1,4 +1,4 @@
-﻿using Database.AuthDb;
+﻿using Database.IdentityDb;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using WebApi.V1;
@@ -7,7 +7,7 @@ namespace WebApi.Tests
 {
     public static class ControllerMock
     {
-        public static UsersController MockUserController(HttpContext httpContext, AuthDbContext? authDbContext = null)
+        public static UsersController MockUserController(HttpContext httpContext, IdentityDbContext? authDbContext = null)
             => MockController(new UsersController(MapperMock.GetMapper(), ServiceMock.MockUserService(authDbContext)), httpContext);
 
         private static TController MockController<TController>(TController controller, HttpContext httpContext)

@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using Business;
 using Database;
-using Database.AuthDb;
+using Database.IdentityDb;
 using Infrastructure;
 using Infrastructure.Configuration.AppSettings;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -22,15 +22,15 @@ namespace WebApi
     {
         public static WebApplicationBuilder AddHealthChecks(this WebApplicationBuilder builder)
         {
-            string authDbConnectionString = builder.Configuration.GetRequiredConnectionString(ConnectionStringNames.AuthDb);
-            string authDbCheckName = Regex.Match(authDbConnectionString, @"^Server=[^;]+;Database=[^;]+;").Value;
+            string authDbConnectionString = builder.Configuration.GetRequiredConnectionString(ConnectionStringNames.IdentityDb);
+            string identityDbAddress = Regex.Match(authDbConnectionString, @"^Server=[^;]+;Database=[^;]+;").Value;
 
             string redisConnectionString = builder.Configuration.GetRequiredConnectionString(ConnectionStringNames.Redis);
-            string redisCheckName = Regex.Match(redisConnectionString, @"^[^,]+").Value;
+            string redisAddress = Regex.Match(redisConnectionString, @"^[^,]+").Value;
 
             builder.Services.AddHealthChecks()
-                            .AddDbContextCheck<AuthDbContext>($"AuthDb ({authDbCheckName})", tags: [HealthCheckImpactTag.Critical.ToString()])
-                            .AddRedis(redisConnectionString, name: $"Redis ({redisCheckName})", tags: [HealthCheckImpactTag.Medium.ToString()], timeout: TimeSpan.FromSeconds(2));
+                            .AddDbContextCheck<IdentityDbContext>($"{ConnectionStringNames.IdentityDb}", tags: [HealthCheckImpactTag.Critical.ToString(), identityDbAddress])
+                            .AddRedis(redisConnectionString, $"{ConnectionStringNames.Redis}", tags: [HealthCheckImpactTag.Medium.ToString(), redisAddress], timeout: TimeSpan.FromSeconds(2));
 
             return builder;
         }
@@ -62,8 +62,8 @@ namespace WebApi
 
         public static WebApplicationBuilder AddDatabase(this WebApplicationBuilder builder)
         {
-            DatabaseAttribute authDbConfig = typeof(AuthDbContext).GetRequiredCustomAttribute<DatabaseAttribute>();
-            builder.Services.AddDbContext<AuthDbContext>(opt =>
+            DatabaseAttribute authDbConfig = typeof(IdentityDbContext).GetRequiredCustomAttribute<DatabaseAttribute>();
+            builder.Services.AddDbContext<IdentityDbContext>(opt =>
             {
                 opt.UseSqlServer(builder.Configuration.GetRequiredConnectionString(authDbConfig.ConnectionStringName), cfg =>
                 {

@@ -1,5 +1,5 @@
-﻿using Database.AuthDb;
-using Database.AuthDb.DefaultSchema;
+﻿using Database.IdentityDb;
+using Database.IdentityDb.DefaultSchema;
 using Infrastructure;
 using Infrastructure.Configuration.AppSettings;
 using Microsoft.EntityFrameworkCore;
@@ -10,10 +10,10 @@ namespace Business
     public class BasicAuthenticationService : IBasicAuthenticator
     {
         private readonly AppSettingsOptions _appSettingsOptions;
-        private readonly AuthDbContext _authDbContext;
+        private readonly IdentityDbContext _authDbContext;
 
         public BasicAuthenticationService(IOptionsSnapshot<AppSettingsOptions> appSettingsOptions,
-                                         AuthDbContext authDbContext)
+                                         IdentityDbContext authDbContext)
         {
             _appSettingsOptions = appSettingsOptions.Value;
             _authDbContext = authDbContext;

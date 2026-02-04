@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Database.AuthDb.DefaultSchema
+namespace Database.IdentityDb.DefaultSchema
 {
     [Table("user", Schema = DefaultSchemaSettings.SchemaName)]
     [Index(nameof(ExternalId), IsUnique = true)]

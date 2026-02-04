@@ -9,7 +9,7 @@
     }
   },
   "profiles": {
-    "Auth API": {
+    "Identity API": {
       "commandName": "Project",
       "dotnetRunMessages": true,
       "launchBrowser": true,

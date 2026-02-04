@@ -1,4 +1,4 @@
-﻿using Database.AuthDb.DefaultSchema;
+﻿using Database.IdentityDb.DefaultSchema;
 using Infrastructure;
 using Microsoft.IdentityModel.Tokens;
 

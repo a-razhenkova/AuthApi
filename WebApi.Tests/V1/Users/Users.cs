@@ -1,5 +1,5 @@
-﻿using Database.AuthDb;
-using Database.AuthDb.DefaultSchema;
+﻿using Database.IdentityDb;
+using Database.IdentityDb.DefaultSchema;
 using Microsoft.AspNetCore.Http;
 using WebApi.Tests;
 using WebApi.Tests.V1;
@@ -18,7 +18,7 @@ namespace V1
         public async Task Load(int expectedStatusCode)
         {
             // Arrange
-            AuthDbContext authDbContext = DatabaseMock.GetAuthDbContext();
+            IdentityDbContext authDbContext = DatabaseMock.GetAuthDbContext();
 
             User user;
             if (expectedStatusCode == StatusCodes.Status200OK)

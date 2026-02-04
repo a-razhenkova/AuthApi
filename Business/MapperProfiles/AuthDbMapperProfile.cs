@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using Database.AuthDb.DefaultSchema;
+using Database.IdentityDb.DefaultSchema;
 
 namespace Business
 {

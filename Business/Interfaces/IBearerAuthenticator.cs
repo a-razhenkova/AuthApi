@@ -1,4 +1,4 @@
-﻿using Database.AuthDb.DefaultSchema;
+﻿using Database.IdentityDb.DefaultSchema;
 using System.IdentityModel.Tokens.Jwt;
 
 namespace Business

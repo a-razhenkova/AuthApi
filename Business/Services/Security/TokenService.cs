@@ -1,4 +1,4 @@
-﻿using Database.AuthDb.DefaultSchema;
+﻿using Database.IdentityDb.DefaultSchema;
 using Infrastructure;
 using Infrastructure.Configuration.AppSettings;
 using Microsoft.AspNetCore.Http;

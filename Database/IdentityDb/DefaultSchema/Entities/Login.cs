@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Database.AuthDb.DefaultSchema
+namespace Database.IdentityDb.DefaultSchema
 {
     [Table("login", Schema = DefaultSchemaSettings.SchemaName)]
     public class Login : EntityBase

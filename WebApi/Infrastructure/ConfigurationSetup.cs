@@ -47,6 +47,13 @@ namespace WebApi
         }
 
         public static string GetRequiredConnectionString(this IConfiguration config, string connectionStringName)
-            => config.GetConnectionString(connectionStringName) ?? throw new ArgumentNullException();
+        {
+            string? connectionString = config.GetConnectionString(connectionStringName);
+
+            if (string.IsNullOrWhiteSpace(connectionString))
+                throw new ArgumentNullException();
+
+            return connectionString;
+        }
     }
 }

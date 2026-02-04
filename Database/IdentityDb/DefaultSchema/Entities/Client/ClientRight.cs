@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Database.AuthDb.DefaultSchema
+namespace Database.IdentityDb.DefaultSchema
 {
     [Table("client_right", Schema = DefaultSchemaSettings.SchemaName)]
     public partial class ClientRight : EntityBase

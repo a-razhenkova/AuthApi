@@ -1,5 +1,5 @@
 ﻿using Database;
-using Database.AuthDb;
+using Database.IdentityDb;
 using DbUp;
 using Infrastructure;
 using Infrastructure.Configuration.AppSettings;
@@ -16,7 +16,7 @@ namespace WebApi
 
             IServiceScope scope = app.Services.CreateScope();
             ILogger logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
-            AuthDbContext authDbContext = scope.ServiceProvider.GetRequiredService<AuthDbContext>();
+            IdentityDbContext authDbContext = scope.ServiceProvider.GetRequiredService<IdentityDbContext>();
 
             if (dbOptions.IsDbMigrationAllowed)
             {

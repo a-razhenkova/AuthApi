@@ -1,4 +1,4 @@
-﻿using Database.AuthDb;
+﻿using Database.IdentityDb;
 using Microsoft.AspNetCore.Mvc;
 using WebApi.V1;
 
@@ -6,7 +6,7 @@ namespace WebApi.Tests.V1
 {
     public abstract class UsersTestsBase
     {
-        public static async Task<(int StatusCode, string Body)> LoadUserAsync(string userExternalId, AuthDbContext? authDbContext = null)
+        public static async Task<(int StatusCode, string Body)> LoadUserAsync(string userExternalId, IdentityDbContext? authDbContext = null)
             => await HttpRequestMock.MockRequest(async (httpContext) =>
             {
                 var controller = ControllerMock.MockUserController(httpContext, authDbContext);

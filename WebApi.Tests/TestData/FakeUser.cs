@@ -1,5 +1,5 @@
-﻿using Database.AuthDb;
-using Database.AuthDb.DefaultSchema;
+﻿using Database.IdentityDb;
+using Database.IdentityDb.DefaultSchema;
 using Infrastructure;
 
 namespace WebApi.Tests
@@ -27,7 +27,7 @@ namespace WebApi.Tests
             };
         }
 
-        public static async Task<User> CreateAndSave(AuthDbContext authDbContext)
+        public static async Task<User> CreateAndSave(IdentityDbContext authDbContext)
         {
             User user = Create();
 

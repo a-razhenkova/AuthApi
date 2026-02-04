@@ -1,6 +1,6 @@
 ﻿using Database;
-using Database.AuthDb;
-using Database.AuthDb.DefaultSchema;
+using Database.IdentityDb;
+using Database.IdentityDb.DefaultSchema;
 using Database.Redis;
 using Google.Authenticator;
 using Infrastructure;
@@ -14,11 +14,11 @@ namespace Business
     public class OtpAuthenticationService : IOtpAuthenticator
     {
         private readonly AppSettingsOptions _appSettingsOptions;
-        private readonly AuthDbContext _authDbContext;
+        private readonly IdentityDbContext _authDbContext;
         private readonly IRedisProvider _redis;
 
         public OtpAuthenticationService(IOptionsSnapshot<AppSettingsOptions> appSettingsOptions,
-                                       AuthDbContext authDbContext,
+                                       IdentityDbContext authDbContext,
                                        IRedisProvider redis)
         {
             _appSettingsOptions = appSettingsOptions.Value;

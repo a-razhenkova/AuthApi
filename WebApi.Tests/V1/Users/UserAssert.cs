@@ -1,4 +1,4 @@
-﻿using Database.AuthDb.DefaultSchema;
+﻿using Database.IdentityDb.DefaultSchema;
 using WebApi.V1;
 
 namespace WebApi.Tests.V1

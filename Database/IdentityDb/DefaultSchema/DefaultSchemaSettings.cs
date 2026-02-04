@@ -1,4 +1,4 @@
-﻿namespace Database.AuthDb.DefaultSchema
+﻿namespace Database.IdentityDb.DefaultSchema
 {
     public static class DefaultSchemaSettings
     {

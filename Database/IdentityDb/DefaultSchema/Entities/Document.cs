@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using Infrastructure;
 
-namespace Database.AuthDb.DefaultSchema
+namespace Database.IdentityDb.DefaultSchema
 {
     [Table("document", Schema = DefaultSchemaSettings.SchemaName)]
     public class Document : EntityBase
