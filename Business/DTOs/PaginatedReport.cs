@@ -10,7 +10,7 @@
         /// <summary>
         /// Total number of pages available in the report.
         /// </summary>
-        public required int TotalPagesCount { get; set; }
+        public required int PagesCount { get; set; }
 
         /// <summary>
         /// Number of items per page in the report.

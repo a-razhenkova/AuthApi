@@ -10,13 +10,13 @@ namespace WebApi.V1
     [Route("api/v1/[controller]")]
     public class ClientsController : JsonApiControllerBase
     {
+        private readonly IClientHandler _client;
         private readonly IMapper _mapper;
-        private readonly IClientProcessor _client;
 
-        public ClientsController(IMapper mapper, IClientProcessor client)
+        public ClientsController(IClientHandler client, IMapper mapper)
         {
-            _mapper = mapper;
             _client = client;
+            _mapper = mapper;
         }
 
         /// <summary>
@@ -88,8 +88,7 @@ namespace WebApi.V1
         /// </summary>
         /// <param name="key">The key of the client whose secret is to be retrieved.</param>
         /// <returns>The secret of the client.</returns>
-        [SensitiveData(isRequestSensitive: false, isResponseSensitive: true)]
-        [HttpGet("{key}/secret")]
+        [HttpGet("{key}/secret"), SensitiveData(IsRequestSensitive = false, IsResponseSensitive = true)]
         [ProducesResponseType(typeof(SimpleResponseModel<string>), StatusCodes.Status200OK)]
         public async Task<IActionResult> LoadClientSecretAsync(string key)
         {
@@ -101,8 +100,7 @@ namespace WebApi.V1
         /// Refreshes the secret for a client.
         /// </summary>
         /// <param name="key">The key of the client whose secret is to be refreshed.</param>
-        [SensitiveData]
-        [HttpPatch("{key}/secret")]
+        [HttpPatch("{key}/secret"), SensitiveData]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<IActionResult> RefreshClientSecretAsync(string key)
         {
@@ -116,8 +114,7 @@ namespace WebApi.V1
         /// <param name="key">The key of the client whose subscription is to be renewed.</param>
         /// <param name="expirationDate">The expiration date for the subscription.</param>
         /// <param name="file">The contract file to be uploaded as part of the renewal.</param>
-        [SensitiveData]
-        [HttpPost("{key}/subscriptions")]
+        [HttpPost("{key}/subscriptions"), SensitiveData]
         [Consumes(MediaTypeNames.Multipart.FormData)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<IActionResult> AddNewClientSubscriptionAsync(string key, [FromForm] DateTime expirationDate, IFormFile file)
@@ -132,8 +129,7 @@ namespace WebApi.V1
         /// <param name="key">The key of the client whose contract is to be retrieved.</param>
         /// <param name="id">The ID of the contract to download.</param>
         /// <returns>The contract.</returns>
-        [SensitiveData(isRequestSensitive: false, isResponseSensitive: true)]
-        [HttpGet("{key}/subscriptions/contracts/{id}")]
+        [HttpGet("{key}/subscriptions/contracts/{id}"), SensitiveData(IsRequestSensitive = false, IsResponseSensitive = true)]
         [Produces(MediaTypeNames.Application.Pdf)]
         [ProducesResponseType(typeof(byte[]), StatusCodes.Status200OK)]
         public async Task<IActionResult> DownloadClientSubscriptionContractAsync(string key, int id)

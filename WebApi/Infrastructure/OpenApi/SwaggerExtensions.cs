@@ -96,7 +96,7 @@ namespace WebApi
                 Reference = new OpenApiReference
                 {
                     Type = ReferenceType.SecurityScheme,
-                    Id = BasicAuth.Schema
+                    Id = AuthorizationSchema.Basic.ToString()
                 }
             };
 
@@ -105,7 +105,7 @@ namespace WebApi
                 Reference = new OpenApiReference
                 {
                     Type = ReferenceType.SecurityScheme,
-                    Id = BearerAuth.Schema
+                    Id = AuthorizationSchema.Bearer.ToString()
                 }
             };
 
@@ -115,14 +115,14 @@ namespace WebApi
                 { basicAuth, new string[] { } }
             });
 
-            opt.AddSecurityDefinition(BasicAuth.Schema, new OpenApiSecurityScheme()
+            opt.AddSecurityDefinition(AuthorizationSchema.Basic.ToString(), new OpenApiSecurityScheme()
             {
                 Type = SecuritySchemeType.Http,
                 Description = "Use to obtain access token for a client.",
                 Scheme = OpenApiConstants.Basic
             });
 
-            opt.AddSecurityDefinition(BearerAuth.Schema, new OpenApiSecurityScheme()
+            opt.AddSecurityDefinition(AuthorizationSchema.Bearer.ToString(), new OpenApiSecurityScheme()
             {
                 Type = SecuritySchemeType.Http,
                 Description = "Adds 'Authorization' header with the value for all HTTP requests below.",

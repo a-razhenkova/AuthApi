@@ -12,38 +12,37 @@ namespace WebApi.V2
     [ApiController, Route("api/v2/[controller]")]
     public class TokenController : JsonApiControllerBase
     {
+        private readonly ITokenHandler _tokenHandler;
         private readonly IMapper _mapper;
-        private readonly IAuthenticator _authenticator;
 
-        public TokenController(IMapper mapper,
-                               IAuthenticator authenticator)
+        public TokenController(ITokenHandler tokenHandler, IMapper mapper)
         {
+            _tokenHandler = tokenHandler;
             _mapper = mapper;
-            _authenticator = authenticator;
         }
 
         /// <summary>
         /// Creates access and refresh tokens for users.
         /// </summary>
         /// <param name="userCredentials">User authentication credentials.</param>
-        [AllowAnonymous, SensitiveData(isResponseSensitive: true)]
-        [HttpPost]
+        [AllowAnonymous]
+        [HttpPost, SensitiveData(IsResponseSensitive = true)]
         [ProducesResponseType(typeof(TokenModel), StatusCodes.Status200OK)]
         public async Task<IActionResult> CreateAccessTokenAsync(V1.UserCredentialsModel userCredentials)
         {
-            TokenDto token = await _authenticator.CreateAccessTokenAsync(userCredentials.Username, userCredentials.Password);
+            TokenDto token = await _tokenHandler.CreateAccessTokenAsync(userCredentials.Username, userCredentials.Password);
             return Ok(_mapper.Map<TokenModel>(token));
         }
 
         /// <summary>
         /// Refreshes the access token for a user.
         /// </summary>
-        [AllowAnonymous, SensitiveData(isResponseSensitive: true)]
-        [HttpPut]
+        [AllowAnonymous]
+        [HttpPut, SensitiveData(IsResponseSensitive = true)]
         [ProducesResponseType(typeof(TokenModel), StatusCodes.Status200OK)]
         public async Task<IActionResult> RefreshAccessTokenAsync()
         {
-            TokenDto token = await _authenticator.RefreshAccessTokenAsync();
+            TokenDto token = await _tokenHandler.RefreshAccessTokenAsync();
             return Ok(_mapper.Map<TokenModel>(token));
         }
     }

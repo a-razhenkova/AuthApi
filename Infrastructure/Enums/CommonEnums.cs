@@ -29,6 +29,12 @@ namespace Infrastructure
         Critical
     }
 
+    public enum AuthorizationSchema
+    {
+        Basic,
+        Bearer
+    }
+
     public enum TokenClaim
     {
         // client

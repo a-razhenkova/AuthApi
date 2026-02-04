@@ -1,0 +1,13 @@
+﻿using Infrastructure;
+
+namespace Business
+{
+    public static class ClientKey
+    {
+        public static string Create()
+            => Guid.NewGuid().ToString();
+
+        public static bool IsValid(string key)
+            => GuidExtensions.IsValidUid(key);
+    }
+}

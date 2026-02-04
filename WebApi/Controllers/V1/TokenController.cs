@@ -10,30 +10,27 @@ namespace WebApi.V1
     [Route("api/v1/[controller]")]
     public class TokenController : JsonApiControllerBase
     {
+        private readonly ITokenHandler _tokenHandler;
         private readonly IMapper _mapper;
-        private readonly IAuthenticator _authenticator;
 
-        public TokenController(IMapper mapper,
-                               IAuthenticator authenticator)
+        public TokenController(ITokenHandler tokenHandler, IMapper mapper)
         {
+            _tokenHandler = tokenHandler;
             _mapper = mapper;
-            _authenticator = authenticator;
         }
 
         /// <summary>
         /// Creates an access token for clients.
         /// </summary>
-        [AllowAnonymous, SensitiveData(isResponseSensitive: true)]
-        [HttpPost]
+        [AllowAnonymous]
+        [HttpPost, SensitiveData(IsResponseSensitive = true)]
         [ProducesResponseType(typeof(TokenModel), StatusCodes.Status200OK)]
         public async Task<IActionResult> CreateAccessTokenAsync()
         {
-            string? authorization = HttpContext.GetAuthorization();
+            var authorization = new Authorization(HttpContext.GetAuthorization());
 
-            if (string.IsNullOrWhiteSpace(authorization))
-                throw new UnauthorizedException();
+            TokenDto token = await _tokenHandler.CreateAccessTokenAsync(authorization);
 
-            TokenDto token = await _authenticator.CreateAccessTokenAsync(authorization);
             return Ok(_mapper.Map<TokenModel>(token));
         }
 
@@ -41,11 +38,11 @@ namespace WebApi.V1
         /// Validates the provided access token.
         /// </summary>
         [AllowAnonymous]
-        [HttpPost("status"), SkipLog]
+        [HttpPost("status"), SkipLog]  
         [ProducesResponseType(typeof(TokenValidationResultModel), StatusCodes.Status200OK)]
         public async Task<IActionResult> ValidateAccessTokenAsync()
         {
-            TokenValidationResult tokenValidationResult = await _authenticator.ValidateAccessTokenAsync();
+            TokenValidationResult tokenValidationResult = await _tokenHandler.ValidateAccessTokenAsync();
             return Ok(_mapper.Map<TokenValidationResultModel>(tokenValidationResult));
         }
     }

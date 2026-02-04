@@ -56,5 +56,13 @@ namespace Infrastructure
 
             return attribute;
         }
+
+        public static (string Key, string Secret) DecodeBasicAuthCredentials(string encodedCredentials)
+        {
+            string decodedCredentials = Encoding.UTF8.GetString(Convert.FromBase64String(encodedCredentials));
+
+            string[] credentials = decodedCredentials.Split(":");
+            return (credentials[0], credentials[1]);
+        }
     }
 }

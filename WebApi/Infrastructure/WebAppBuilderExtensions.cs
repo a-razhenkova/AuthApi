@@ -96,7 +96,7 @@ namespace WebApi
                             .AddJwtBearer(opt =>
                             {
                                 opt.SaveToken = true;
-                                opt.TokenValidationParameters = JwtService.GetAccessValidationParameters(securityOptions);
+                                opt.TokenValidationParameters = new AccessToken(securityOptions).ValidationParams;
                             });
 
             return builder;

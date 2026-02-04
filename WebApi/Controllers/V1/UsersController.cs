@@ -9,11 +9,10 @@ namespace WebApi.V1
     [Route("api/v1/[controller]")]
     public class UsersController : JsonApiControllerBase
     {
+        private readonly IUserHandler _user;
         private readonly IMapper _mapper;
-        private readonly IUserProcessor _user;
 
-        public UsersController(IMapper mapper,
-                              IUserProcessor user)
+        public UsersController(IUserHandler user, IMapper mapper)
         {
             _mapper = mapper;
             _user = user;
@@ -50,8 +49,8 @@ namespace WebApi.V1
         /// </summary>
         /// <param name="requestModel">The model containing user registration details.</param>
         /// <returns>The external ID of the registered user.</returns>
-        [SensitiveData]
         [HttpPost]
+        [SensitiveData]
         [ProducesResponseType(typeof(SimpleResponseModel<string>), StatusCodes.Status200OK)]
         public async Task<IActionResult> RegisterUserAsync(UserRegistrationModel requestModel)
         {
@@ -89,8 +88,7 @@ namespace WebApi.V1
         /// </summary>
         /// <param name="id">The external ID of the user whose password is to be changed.</param>
         /// <param name="requestModel">The model containing the old and new passwords.</param>
-        [SensitiveData]
-        [HttpPatch("{id}/password")]
+        [HttpPatch("{id}/password"), SensitiveData]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<IActionResult> ChangeUserPasswordAsync(string id, UserPasswordModel requestModel)
         {
@@ -103,8 +101,7 @@ namespace WebApi.V1
         /// </summary>
         /// <param name="id">The external ID of the user whose email is to be changed.</param>
         /// <param name="requestModel">The model containing the new email and the user's password.</param>
-        [SensitiveData]
-        [HttpPatch("{id}/email")]
+        [HttpPatch("{id}/email"), SensitiveData]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<IActionResult> ChangeEmailAsync(string id, UserEmailModel requestModel)
         {

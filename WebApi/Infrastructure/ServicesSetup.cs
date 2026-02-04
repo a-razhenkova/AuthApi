@@ -11,17 +11,15 @@ namespace WebApi
 
             // scoped services
             builder.Services.AddScoped<IHealthChecker, HealthCheckService>();
-            builder.Services.AddScoped<IReportProvider, ReportService>();
+            builder.Services.AddScoped<IReportHandler, ReportService>();
 
-            builder.Services.AddScoped<IAuthenticator, AuthService>();
-            builder.Services.AddScoped<IUserAuthenticator, UserAuthService>();
-            builder.Services.AddScoped<IClientAuthenticator, ClientAuthService>();
+            builder.Services.AddScoped<IBearerAuthenticator, BearerAuthenticationService>();
+            builder.Services.AddScoped<IBasicAuthenticator, BasicAuthenticationService>();
+            builder.Services.AddScoped<IOtpAuthenticator, OtpAuthenticationService>();
 
-            builder.Services.AddScoped<IJwtProvider, JwtService>();
-            builder.Services.AddScoped<IOtpProvider, OtpService>();
-
-            builder.Services.AddScoped<IClientProcessor, ClientService>();
-            builder.Services.AddScoped<IUserProcessor, UserService>();
+            builder.Services.AddScoped<ITokenHandler, TokenService>();
+            builder.Services.AddScoped<IClientHandler, ClientService>();
+            builder.Services.AddScoped<IUserHandler, UserService>();
 
             return builder;
         }

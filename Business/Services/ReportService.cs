@@ -5,7 +5,7 @@ using Microsoft.Extensions.Options;
 
 namespace Business
 {
-    public class ReportService : IReportProvider
+    public class ReportService : IReportHandler
     {
         protected readonly AppSettingsOptions _appSettingsOptions;
         protected readonly IMapper _mapper;
@@ -24,16 +24,16 @@ namespace Business
                 : pageParams.ItemsPerPage;
 
             int itemsCount = await query.CountAsync();
-            int totalPagesCount = Convert.ToInt32(Math.Ceiling((double)itemsCount / itemsPerPage));
+            int pagesCount = Convert.ToInt32(Math.Ceiling((double)itemsCount / itemsPerPage));
 
-            int pageNumber = pageParams.ItemsPerPage;
+            int pageNumber = pageParams.RequestedPageNumber;
             if (pageParams.ItemsPerPage <= 0)
             {
                 pageNumber = 1;
             }
-            else if (pageParams.ItemsPerPage > totalPagesCount)
+            else if (pageParams.ItemsPerPage > pagesCount)
             {
-                pageNumber = totalPagesCount;
+                pageNumber = pagesCount;
             }
 
             IEnumerable<TData> data = await query
@@ -44,7 +44,7 @@ namespace Business
             return new PaginatedReport<TDataDto>()
             {
                 RequestedPageNumber = pageNumber,
-                TotalPagesCount = totalPagesCount,
+                PagesCount = pagesCount,
                 ItemsPerPage = itemsPerPage,
                 Data = _mapper.Map<IEnumerable<TDataDto>>(data)
             };

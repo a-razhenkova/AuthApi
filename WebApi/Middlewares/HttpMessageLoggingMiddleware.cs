@@ -95,11 +95,13 @@ namespace WebApi
 
                 if (!string.IsNullOrWhiteSpace(authorization))
                 {
-                    if (authorization.IsBasicAuth())
+                    var authorizationObj = new Authorization(authorization);
+
+                    if (authorizationObj.Schema == AuthorizationSchema.Basic)
                     {
-                        user = BasicAuth.Decode(authorization).Key;
+                        user = Utils.DecodeBasicAuthCredentials(authorizationObj.Value).Key;
                     }
-                    else if (authorization.IsBearerAuth())
+                    else if (authorizationObj.Schema == AuthorizationSchema.Bearer)
                     {
                         user = httpContext.User.FindFirstValue(TokenClaim.Username.GetDescription());
 

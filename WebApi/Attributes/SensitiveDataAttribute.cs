@@ -3,15 +3,13 @@
     [AttributeUsage(AttributeTargets.Method)]
     public class SensitiveDataAttribute : Attribute
     {
-        public SensitiveDataAttribute(bool isRequestSensitive = true,
-                                     bool isResponseSensitive = false)
+        public SensitiveDataAttribute()
         {
-            IsRequestSensitive = isRequestSensitive;
-            IsResponseSensitive = isResponseSensitive;
+
         }
 
-        public bool IsRequestSensitive { get; init; }
+        public bool IsRequestSensitive { get; set; } = true;
 
-        public bool IsResponseSensitive { get; init; }
+        public bool IsResponseSensitive { get; set; } = false;
     }
 }
