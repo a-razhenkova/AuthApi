@@ -5,7 +5,7 @@ BEGIN TRY
 
 	INSERT INTO [dbo].[client]
 	SELECT NULL AS [version],
-		   'Auth API' AS [name],
+		   'Identity API' AS [name],
 		   'dba1d25a-0062-49e7-b4f0-31224a69f9e4' AS [key],
 		   '818fec5e-bff4-4396-85a7-9cc2eccd166f' AS [secret],
 		   0 AS [wrong_login_attempts_counter],

@@ -91,7 +91,7 @@ namespace WebApi
 
         private static void AddAuthorization(this SwaggerGenOptions opt)
         {
-            var bearerAuth = new OpenApiSecurityScheme
+            var basicAuth = new OpenApiSecurityScheme
             {
                 Reference = new OpenApiReference
                 {
@@ -100,7 +100,7 @@ namespace WebApi
                 }
             };
 
-            var basicAuth = new OpenApiSecurityScheme
+            var bearerAuth = new OpenApiSecurityScheme
             {
                 Reference = new OpenApiReference
                 {
