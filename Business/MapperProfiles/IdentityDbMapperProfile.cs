@@ -3,9 +3,9 @@ using Database.IdentityDb.DefaultSchema;
 
 namespace Business
 {
-    public class AuthDbMapperProfile : Profile
+    public class IdentityDbMapperProfile : Profile
     {
-        public AuthDbMapperProfile()
+        public IdentityDbMapperProfile()
         {
             CreateClientMaps();
             CreateUserMaps();

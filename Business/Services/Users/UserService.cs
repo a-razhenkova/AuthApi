@@ -13,24 +13,24 @@ namespace Business
     public class UserService : IUserHandler
     {
         private readonly AppSettingsOptions _appSettingsOptions;
-        private readonly IdentityDbContext _authDbContext;
+        private readonly IdentityDbContext _identityDbContext;
         private readonly IMapper _mapper;
         private readonly IReportHandler _reportHandler;
 
         public UserService(IOptionsSnapshot<AppSettingsOptions> appSettingsOptions,
-                          IdentityDbContext authDbContext,
+                          IdentityDbContext identityDbContext,
                           IMapper mapper,
                           IReportHandler reportHandler)
         {
             _appSettingsOptions = appSettingsOptions.Value;
-            _authDbContext = authDbContext;
+            _identityDbContext = identityDbContext;
             _mapper = mapper;
             _reportHandler = reportHandler;
         }
 
         public async Task<PaginatedReport<UserDto>> SearchAsync(UserSearchParams userSearchParams, CancellationToken cancellationToken)
         {
-            IQueryable<User> searchQuery = _authDbContext.User;
+            IQueryable<User> searchQuery = _identityDbContext.User;
 
             if (!string.IsNullOrWhiteSpace(userSearchParams.Username))
             {
@@ -56,7 +56,7 @@ namespace Business
 
         public async Task<UserDto> LoadAsync(string userExternalId)
         {
-            User user = await _authDbContext.User.AsNoTracking()
+            User user = await _identityDbContext.User.AsNoTracking()
                 .Where(u => u.ExternalId == userExternalId)
                 .Include(u => u.Status)
                 .SingleOrDefaultAsync() ?? throw new NotFoundException("User not found.");
@@ -68,7 +68,7 @@ namespace Business
         {
             ValidatePasswordFormat(userDto.Password);
 
-            User? user = await _authDbContext.User.AsNoTracking()
+            User? user = await _identityDbContext.User.AsNoTracking()
                 .Where(u => u.Username == userDto.Username)
                 .SingleOrDefaultAsync();
 
@@ -80,22 +80,22 @@ namespace Business
             user.Password = UserSecurePassword.Create(userDto.Password);
             user.OtpSecret = UserOtpSecret.Create();
 
-            await _authDbContext.AddAsync(user);
-            await _authDbContext.SaveChangesAsync();
+            await _identityDbContext.AddAsync(user);
+            await _identityDbContext.SaveChangesAsync();
 
             return user.ExternalId;
         }
 
         public async Task UpdateAsync(string userExternalId, UserDto userDto)
         {
-            User updatedUser = await _authDbContext.User
+            User updatedUser = await _identityDbContext.User
                 .Where(u => u.ExternalId == userExternalId)
                 .Include(u => u.Status)
                 .Include(u => u.Password)
                 .SingleOrDefaultAsync() ?? throw new NotFoundException("User not found.");
 
             if (!updatedUser.Username.Equals(userDto.Username)
-                && await _authDbContext.User.AsNoTracking().Where(u => u.Username == userDto.Username).AnyAsync())
+                && await _identityDbContext.User.AsNoTracking().Where(u => u.Username == userDto.Username).AnyAsync())
             {
                 throw new ConflictException($"User with username '{userDto.Username}' already registered.");
             }
@@ -105,25 +105,25 @@ namespace Business
 
             if (!updatedUser.IsEqual(currentUser))
             {
-                await _authDbContext.SaveChangesAsync();
+                await _identityDbContext.SaveChangesAsync();
             }
         }
 
         public async Task DeleteAsync(string userExternalId)
         {
-            User user = await _authDbContext.User
+            User user = await _identityDbContext.User
                 .Where(u => u.ExternalId == userExternalId)
                 .SingleOrDefaultAsync() ?? throw new NotFoundException("User not found.");
 
-            _authDbContext.Remove(user);
-            await _authDbContext.SaveChangesAsync();
+            _identityDbContext.Remove(user);
+            await _identityDbContext.SaveChangesAsync();
         }
 
         public async Task ChangePasswordAsync(string userExternalId, string oldPassword, string newPassword)
         {
             ValidatePasswordFormat(newPassword);
 
-            User user = await _authDbContext.User
+            User user = await _identityDbContext.User
                 .Where(u => u.ExternalId == userExternalId)
                 .Include(u => u.Password)
                 .SingleOrDefaultAsync() ?? throw new NotFoundException("User not found.");
@@ -133,7 +133,7 @@ namespace Business
 
             user.Password = UserSecurePassword.Create(newPassword);
 
-            await _authDbContext.SaveChangesAsync();
+            await _identityDbContext.SaveChangesAsync();
 
             // TODO: send information email async
         }
@@ -142,7 +142,7 @@ namespace Business
         {
             ValidatePasswordFormat(password);
 
-            User user = await _authDbContext.User
+            User user = await _identityDbContext.User
                 .Where(u => u.ExternalId == userExternalId)
                 .Include(u => u.Status)
                 .Include(u => u.Password)
@@ -156,7 +156,7 @@ namespace Business
             user.Status.Value = UserStatuses.Restricted;
             user.Status.Reason = UserStatusReasons.EmailChanged;
 
-            await _authDbContext.SaveChangesAsync();
+            await _identityDbContext.SaveChangesAsync();
         }
 
         private void ValidatePasswordFormat(string? password)

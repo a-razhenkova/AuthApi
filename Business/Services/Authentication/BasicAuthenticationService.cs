@@ -10,13 +10,13 @@ namespace Business
     public class BasicAuthenticationService : IBasicAuthenticator
     {
         private readonly AppSettingsOptions _appSettingsOptions;
-        private readonly IdentityDbContext _authDbContext;
+        private readonly IdentityDbContext _identityDbContext;
 
         public BasicAuthenticationService(IOptionsSnapshot<AppSettingsOptions> appSettingsOptions,
-                                         IdentityDbContext authDbContext)
+                                         IdentityDbContext identityDbContext)
         {
             _appSettingsOptions = appSettingsOptions.Value;
-            _authDbContext = authDbContext;
+            _identityDbContext = identityDbContext;
         }
 
         public async Task<Client> AuthenticateAsync(Authorization authorization)
@@ -34,7 +34,7 @@ namespace Business
 
         public async Task<Client> AuthenticateAsync(string clientKey, string clientSecret)
         {
-            Client client = await _authDbContext.Client
+            Client client = await _identityDbContext.Client
                 .Where(c => c.Key == clientKey)
                 .Include(c => c.Status)
                 .Include(c => c.Right)
@@ -48,7 +48,7 @@ namespace Business
             {
                 client.Status.Value = ClientStatuses.Disabled;
                 client.Status.Reason = ClientStatusReasons.ExpiredSubscription;
-                await _authDbContext.SaveChangesAsync();
+                await _identityDbContext.SaveChangesAsync();
 
                 throw new ForbiddenException("Client subscription has expired.");
             }

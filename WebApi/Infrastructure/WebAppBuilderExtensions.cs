@@ -22,8 +22,8 @@ namespace WebApi
     {
         public static WebApplicationBuilder AddHealthChecks(this WebApplicationBuilder builder)
         {
-            string authDbConnectionString = builder.Configuration.GetRequiredConnectionString(ConnectionStringNames.IdentityDb);
-            string identityDbAddress = Regex.Match(authDbConnectionString, @"^Server=[^;]+;Database=[^;]+;").Value;
+            string identityDbConnectionString = builder.Configuration.GetRequiredConnectionString(ConnectionStringNames.IdentityDb);
+            string identityDbAddress = Regex.Match(identityDbConnectionString, @"^Server=[^;]+;Database=[^;]+;").Value;
 
             string redisConnectionString = builder.Configuration.GetRequiredConnectionString(ConnectionStringNames.Redis);
             string redisAddress = Regex.Match(redisConnectionString, @"^[^,]+").Value;
@@ -39,7 +39,7 @@ namespace WebApi
         {
             var mapperConfig = new MapperConfiguration(cfg =>
             {
-                cfg.AddProfile(new AuthDbMapperProfile());
+                cfg.AddProfile(new IdentityDbMapperProfile());
 
                 cfg.AddProfile(new V1.CommonMapperProfile());
                 cfg.AddProfile(new V2.CommonMapperProfile());
@@ -62,14 +62,14 @@ namespace WebApi
 
         public static WebApplicationBuilder AddDatabase(this WebApplicationBuilder builder)
         {
-            DatabaseAttribute authDbConfig = typeof(IdentityDbContext).GetRequiredCustomAttribute<DatabaseAttribute>();
+            DatabaseAttribute identityDbConfig = typeof(IdentityDbContext).GetRequiredCustomAttribute<DatabaseAttribute>();
             builder.Services.AddDbContext<IdentityDbContext>(opt =>
             {
-                opt.UseSqlServer(builder.Configuration.GetRequiredConnectionString(authDbConfig.ConnectionStringName), cfg =>
+                opt.UseSqlServer(builder.Configuration.GetRequiredConnectionString(identityDbConfig.ConnectionStringName), cfg =>
                 {
-                    cfg.CommandTimeout(authDbConfig.CommandTimeoutInSeconds);
+                    cfg.CommandTimeout(identityDbConfig.CommandTimeoutInSeconds);
                     cfg.MigrationsAssembly(DatabaseAssembly.GetExecutingAssembly());
-                    cfg.MigrationsHistoryTable(authDbConfig.MigrationsHistoryTableName, authDbConfig.DefaultSchemaName);
+                    cfg.MigrationsHistoryTable(identityDbConfig.MigrationsHistoryTableName, identityDbConfig.DefaultSchemaName);
                 });
 #if DEBUG
                 opt.LogTo(src => Debug.WriteLine(src));

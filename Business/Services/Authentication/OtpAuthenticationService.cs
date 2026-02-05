@@ -14,15 +14,15 @@ namespace Business
     public class OtpAuthenticationService : IOtpAuthenticator
     {
         private readonly AppSettingsOptions _appSettingsOptions;
-        private readonly IdentityDbContext _authDbContext;
+        private readonly IdentityDbContext _identityDbContext;
         private readonly IRedisProvider _redis;
 
         public OtpAuthenticationService(IOptionsSnapshot<AppSettingsOptions> appSettingsOptions,
-                                       IdentityDbContext authDbContext,
+                                       IdentityDbContext identityDbContext,
                                        IRedisProvider redis)
         {
             _appSettingsOptions = appSettingsOptions.Value;
-            _authDbContext = authDbContext;
+            _identityDbContext = identityDbContext;
             _redis = redis;
         }
 
@@ -60,7 +60,7 @@ namespace Business
                 throw new UnauthorizedException("Invalid code.");
             }
 
-            User user = await _authDbContext.User
+            User user = await _identityDbContext.User
                .Where(u => u.ExternalId == userExternalId)
                .Include(u => u.Status)
                .Include(u => u.Login)

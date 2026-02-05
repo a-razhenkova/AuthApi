@@ -13,24 +13,24 @@ namespace Business
     public class ClientService : IClientHandler
     {
         private readonly AppSettingsOptions _appSettingsOptions;
-        private readonly IdentityDbContext _authDbContext;
+        private readonly IdentityDbContext _identityDbContext;
         private readonly IMapper _mapper;
         private readonly IReportHandler _reportHandler;
 
         public ClientService(IOptionsSnapshot<AppSettingsOptions> appSettingsOptions,
-                            IdentityDbContext authDbContext,
+                            IdentityDbContext identityDbContext,
                             IMapper mapper,
                             IReportHandler reportHandler)
         {
             _appSettingsOptions = appSettingsOptions.Value;
-            _authDbContext = authDbContext;
+            _identityDbContext = identityDbContext;
             _mapper = mapper;
             _reportHandler = reportHandler;
         }
 
         public async Task<PaginatedReport<ClientDto>> SearchAsync(ClientSearchParams clientSearchParams, CancellationToken cancellationToken)
         {
-            IQueryable<Client> searchQuery = _authDbContext.Client;
+            IQueryable<Client> searchQuery = _identityDbContext.Client;
 
             if (!string.IsNullOrWhiteSpace(clientSearchParams.Key))
             {
@@ -66,7 +66,7 @@ namespace Business
 
         public async Task<ClientDto> LoadAsync(string key)
         {
-            Client client = await _authDbContext.Client.AsNoTracking()
+            Client client = await _identityDbContext.Client.AsNoTracking()
                 .Where(c => c.Key == key)
                 .Include(c => c.Status)
                 .Include(c => c.Right)
@@ -81,15 +81,15 @@ namespace Business
             client.Key = ClientKey.Create();
             client.Secret = ClientSecret.Create();
 
-            await _authDbContext.AddAsync(client);
-            await _authDbContext.SaveChangesAsync();
+            await _identityDbContext.AddAsync(client);
+            await _identityDbContext.SaveChangesAsync();
 
             return client.Key;
         }
 
         public async Task UpdateAsync(string key, ClientDto clientDto)
         {
-            Client updatedClient = await _authDbContext.Client
+            Client updatedClient = await _identityDbContext.Client
                 .Where(c => c.Key == key)
                 .Include(c => c.Status)
                 .Include(c => c.Right)
@@ -100,13 +100,13 @@ namespace Business
 
             if (!updatedClient.IsEqual(currentClient))
             {
-                await _authDbContext.SaveChangesAsync();
+                await _identityDbContext.SaveChangesAsync();
             }
         }
 
         public async Task DeleteAsync(string key)
         {
-            Client client = await _authDbContext.Client
+            Client client = await _identityDbContext.Client
                 .Where(c => c.Key == key)
                 .Include(c => c.Status)
                 .Include(c => c.Subscriptions)
@@ -116,18 +116,18 @@ namespace Business
             {
                 client.Status.Value = ClientStatuses.Disabled;
                 client.Status.Reason = ClientStatusReasons.None;
-                await _authDbContext.SaveChangesAsync();
+                await _identityDbContext.SaveChangesAsync();
             }
             else
             {
-                _authDbContext.Remove(client);
-                await _authDbContext.SaveChangesAsync();
+                _identityDbContext.Remove(client);
+                await _identityDbContext.SaveChangesAsync();
             }
         }
 
         public async Task<string> LoadSecretAsync(string key)
         {
-            Client client = await _authDbContext.Client.AsNoTracking()
+            Client client = await _identityDbContext.Client.AsNoTracking()
                 .Where(c => c.Key == key)
                 .SingleOrDefaultAsync() ?? throw new NotFoundException("Client not found.");
 
@@ -136,13 +136,13 @@ namespace Business
 
         public async Task<string> RefreshSecretAsync(string key)
         {
-            Client client = await _authDbContext.Client
+            Client client = await _identityDbContext.Client
                 .Where(c => c.Key == key)
                 .SingleOrDefaultAsync() ?? throw new NotFoundException("Client not found.");
 
             client.Secret = ClientSecret.Create();
 
-            await _authDbContext.SaveChangesAsync();
+            await _identityDbContext.SaveChangesAsync();
 
             return client.Secret;
         }
@@ -160,7 +160,7 @@ namespace Business
                 throw new BadRequestException("Invalid file type.");
             }
 
-            Client client = await _authDbContext.Client
+            Client client = await _identityDbContext.Client
                 .Where(c => c.Key == clientKey)
                 .Include(c => c.Status)
                 .Include(c => c.Subscriptions)
@@ -199,7 +199,7 @@ namespace Business
                     client.Status.Reason = ClientStatusReasons.None;
                 }
 
-                await _authDbContext.SaveChangesAsync();
+                await _identityDbContext.SaveChangesAsync();
             }
             catch
             {
@@ -212,7 +212,7 @@ namespace Business
 
         public async Task<FileDto> DownloadContractAsync(string clientKey, int contractId, DocumentTypes documentType)
         {
-            Document contract = await _authDbContext.ClientSubscription.AsNoTracking()
+            Document contract = await _identityDbContext.ClientSubscription.AsNoTracking()
                 .Where(c => c.Client.Key.Equals(clientKey)
                          && c.Subscription.Contract.Id == contractId
                          && c.Subscription.Contract.Type == documentType)

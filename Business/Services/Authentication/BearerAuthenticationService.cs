@@ -13,20 +13,20 @@ namespace Business
     {
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly AppSettingsOptions _appSettingsOptions;
-        private readonly IdentityDbContext _authDbContext;
+        private readonly IdentityDbContext _identityDbContext;
 
         public BearerAuthenticationService(IHttpContextAccessor httpContextAccessor,
                                           IOptionsSnapshot<AppSettingsOptions> appSettingsOptions,
-                                          IdentityDbContext authDbContext)
+                                          IdentityDbContext identityDbContext)
         {
             _httpContextAccessor = httpContextAccessor;
             _appSettingsOptions = appSettingsOptions.Value;
-            _authDbContext = authDbContext;
+            _identityDbContext = identityDbContext;
         }
 
         public async Task<User> AuthAsync(string username, string password)
         {
-            User user = await _authDbContext.User
+            User user = await _identityDbContext.User
                 .Where(u => u.Username == username)
                 .Include(u => u.Status)
                 .Include(u => u.Password)
@@ -53,7 +53,7 @@ namespace Business
                 .Select(c => c.Value)
                 .SingleOrDefault() ?? throw new UnauthorizedException("Invalid token.");
 
-            User user = await _authDbContext.User
+            User user = await _identityDbContext.User
                .Where(u => u.ExternalId == userExternalId)
                .Include(u => u.Status)
                .Include(u => u.Login)
@@ -96,7 +96,7 @@ namespace Business
                 }
             }
 
-            await _authDbContext.SaveChangesAsync();
+            await _identityDbContext.SaveChangesAsync();
 
             if (isUserBlocked)
             {

@@ -16,13 +16,13 @@ namespace WebApi
 
             IServiceScope scope = app.Services.CreateScope();
             ILogger logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
-            IdentityDbContext authDbContext = scope.ServiceProvider.GetRequiredService<IdentityDbContext>();
+            IdentityDbContext identityDbContext = scope.ServiceProvider.GetRequiredService<IdentityDbContext>();
 
             if (dbOptions.IsDbMigrationAllowed)
             {
                 using (LogContext.PushProperty(LoggerContextProperty.ActionType.ToString(), LoggerContext.DbMigration))
                 {
-                    await authDbContext.ApplyDbPendingMigrationsAsync(logger);
+                    await identityDbContext.ApplyDbPendingMigrationsAsync(logger);
                 }
             }
 
@@ -30,7 +30,7 @@ namespace WebApi
             {
                 using (LogContext.PushProperty(LoggerContextProperty.ActionType.ToString(), LoggerContext.DbUp))
                 {
-                    authDbContext.ApplyDbPendingScriptsAsync(logger, app.Configuration);
+                    identityDbContext.ApplyDbPendingScriptsAsync(logger, app.Configuration);
                 }
             }
 
