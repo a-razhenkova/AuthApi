@@ -7,7 +7,7 @@ namespace Business
 {
     public class UserAccessToken : UserToken
     {
-        public UserAccessToken(User user, TokenOptions options)
+        public UserAccessToken(User user, SecurityTokenOptions options)
             : base(user, options)
         {
 

@@ -3,9 +3,9 @@ using System.Security.Claims;
 
 namespace Business
 {
-    public interface IToken
+    public interface ISecurityToken
     {
-        TokenOptions TokenOptions { get; init; }
+        SecurityTokenOptions TokenOptions { get; init; }
 
         List<Claim> CreateClaims();
     }

@@ -24,9 +24,9 @@ namespace Infrastructure.Configuration.AppSettings
         [Required]
         public string TokenAudience { get; init; } = string.Empty;
 
-        public TokenOptions AccessToken { get; init; } = new();
+        public SecurityTokenOptions AccessToken { get; init; } = new();
 
-        public TokenOptions RefreshToken { get; init; } = new();
+        public SecurityTokenOptions RefreshToken { get; init; } = new();
 
         public MultiFactorAuthOptions MultiFactorAuth { get; init; } = new();
     }
@@ -40,7 +40,7 @@ namespace Infrastructure.Configuration.AppSettings
         public int RequestsPerWindow { get; init; } = 15;
     }
 
-    public record TokenOptions
+    public record SecurityTokenOptions
     {
         [MinLength(16)]
         public string Key { get; init; } = string.Empty;

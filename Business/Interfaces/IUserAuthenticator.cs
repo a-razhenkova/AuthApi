@@ -1,11 +1,10 @@
 ﻿using Database.IdentityDb.DefaultSchema;
-using Infrastructure;
 
 namespace Business
 {
-    public interface IBearerAuthenticator
+    public interface IUserAuthenticator
     {
+        Task<User> AuthenticateAsync(string externalId);
         Task<User> AuthenticateAsync(string username, string password);
-        Task<User> AuthenticateByRefreshTokenAsync(Authorization authorization);
     }
 }

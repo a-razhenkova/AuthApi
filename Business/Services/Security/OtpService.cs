@@ -16,7 +16,7 @@ namespace Business
 
         public async Task<string> CreateAndSendOtpAsync(string username, string password)
         {
-            User user = await _bearerAuthenticator.AuthAsync(username, password);
+            User user = await _bearerAuthenticator.AuthenticateAsync(username, password);
             return await _otpAuthenticator.CreateAndSendOtpAsync(user);
         }
     }

@@ -28,8 +28,7 @@ namespace Business
 
         public async Task<string> CreateAndSendOtpAsync(User user)
         {
-            if (!user.Status.IsOtpAuthAllowed())
-                throw new ForbiddenException($"User status is '{user.Status.Value}'.");
+            CheckUserStatus(user.Status);
 
             var twoFactorAuthenticator = new TwoFactorAuthenticator();
             string otp = twoFactorAuthenticator.GetCurrentPIN(user.OtpSecret, false);
@@ -66,8 +65,7 @@ namespace Business
                .Include(u => u.Login)
                .SingleOrDefaultAsync() ?? throw new UnauthorizedException("The code has expired.");
 
-            if (!user.Status.IsAuthAllowed())
-                throw new ForbiddenException($"User status is '{user.Status.Value}'.");
+            CheckUserStatus(user.Status);
 
             bool isPinValid = new TwoFactorAuthenticator().ValidateTwoFactorPIN(user.OtpSecret, otp, true);
 
@@ -77,6 +75,16 @@ namespace Business
                 throw new UnauthorizedException("Invalid code.");
 
             return user;
+        }
+
+        private void CheckUserStatus(UserStatus status)
+        {
+            if (status.Value == UserStatuses.Restricted
+             && status.Value == UserStatuses.Blocked
+             && status.Value == UserStatuses.Disabled)
+            {
+                throw new ForbiddenException($"User status is '{status.Value}'.");
+            }
         }
 
         private async Task ProcessLoginAttemptAsync(OneTimePasswordDto otpDto, bool isLoginSuccessful)

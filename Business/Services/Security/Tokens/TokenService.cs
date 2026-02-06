@@ -4,7 +4,6 @@ using Infrastructure.Configuration.AppSettings;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
-using System.IdentityModel.Tokens.Jwt;
 
 namespace Business
 {
@@ -38,6 +37,12 @@ namespace Business
                         Client client = await _basicAuthenticator.AuthenticateAsync(authorization);
                         return await CreateAccessTokenAsync(client);
                     }
+                // TODO: OpenId
+                //case AuthorizationSchema.Bearer:
+                //    {
+                //        User user = await _bearerAuthenticator.AuthenticateAsync(authorization);
+                //        return await CreateAccessTokenAsync(user);
+                //    }
                 default:
                     throw new NotImplementedException();
             }
@@ -45,29 +50,29 @@ namespace Business
 
         public async Task<TokenDto> CreateAccessTokenAsync(Client client)
         {
-            var accessToken = new AccessToken(_appSettingsOptions.Security);
+            var accessToken = new AccessToken(_appSettingsOptions.Security).Create(client);
 
             return new TokenDto()
             {
-                AccessToken = accessToken.Create(client)
+                AccessToken = accessToken
             };
         }
 
         public async Task<TokenDto> CreateAccessTokenAsync(string username, string password)
         {
-            User user = await _bearerAuthenticator.AuthAsync(username, password);
+            User user = await _bearerAuthenticator.AuthenticateAsync(username, password);
             return await CreateAccessTokenAsync(user);
         }
 
         public async Task<TokenDto> CreateAccessTokenAsync(User user)
         {
-            var accessToken = new AccessToken(_appSettingsOptions.Security);
-            var refreshToken = new RefreshToken(_appSettingsOptions.Security);
+            string accessToken = new AccessToken(_appSettingsOptions.Security).Create(user);
+            string refreshToken = new RefreshToken(_appSettingsOptions.Security).Create(user);
 
             return new TokenDto()
             {
-                AccessToken = accessToken.Create(user),
-                RefreshToken = refreshToken.Create(user)
+                AccessToken = accessToken,
+                RefreshToken = refreshToken
             };
         }
 
@@ -80,25 +85,20 @@ namespace Business
         public async Task<TokenDto> RefreshAccessTokenAsync()
         {
             var authorization = new Authorization(_httpContextAccessor.HttpContext.GetAuthorization());
+            User user = await _bearerAuthenticator.AuthenticateByRefreshTokenAsync(authorization);
 
-            if (authorization.Schema != AuthorizationSchema.Bearer)
-                throw new BadRequestException("Invalid token format.");
-
-            JwtSecurityToken? jwt = new RefreshToken(_appSettingsOptions.Security).Decode(authorization.Value)
-                ?? throw new UnauthorizedException("Invalid token.");
-
-            User user = await _bearerAuthenticator.AuthAsync(jwt);
+            string accessToken = new AccessToken(_appSettingsOptions.Security).Create(user);
 
             return new TokenDto()
             {
-                AccessToken = new AccessToken(_appSettingsOptions.Security).Create(user)
+                AccessToken = accessToken
             };
         }
 
         public async Task<TokenValidationResult> ValidateAccessTokenAsync()
         {
             var authorization = new Authorization(_httpContextAccessor.HttpContext.GetAuthorization());
-            return await new AccessToken(_appSettingsOptions.Security).ValidateAsync(authorization.Value);
+            return await new AccessToken(authorization.Value, _appSettingsOptions.Security).ValidateAsync();
         }
     }
 }

@@ -43,7 +43,7 @@ namespace WebApi.V2
         public async Task<IActionResult> RefreshAccessTokenAsync()
         {
             TokenDto token = await _tokenHandler.RefreshAccessTokenAsync();
-            return Ok(_mapper.Map<TokenModel>(token));
+            return Ok(_mapper.Map<V1.TokenModel>(token));
         }
     }
 }

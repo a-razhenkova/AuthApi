@@ -7,7 +7,7 @@ namespace Business
 {
     public class ClientAccessToken : ClientToken
     {
-        public ClientAccessToken(Client client, TokenOptions options)
+        public ClientAccessToken(Client client, SecurityTokenOptions options)
             : base(client, options)
         {
 

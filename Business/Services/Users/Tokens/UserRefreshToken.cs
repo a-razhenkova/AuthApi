@@ -7,7 +7,7 @@ namespace Business
 {
     public class UserRefreshToken : UserToken
     {
-        public UserRefreshToken(User user, TokenOptions options)
+        public UserRefreshToken(User user, SecurityTokenOptions options)
             : base(user, options)
         {
 

@@ -4,17 +4,17 @@ using System.Security.Claims;
 
 namespace Business
 {
-    public abstract class ClientToken : IToken
+    public abstract class ClientToken : ISecurityToken
     {
         protected readonly Client _client;
 
-        protected ClientToken(Client client, TokenOptions options)
+        protected ClientToken(Client client, SecurityTokenOptions options)
         {
             _client = client;
             TokenOptions = options;
         }
 
-        public TokenOptions TokenOptions { get; init; }
+        public SecurityTokenOptions TokenOptions { get; init; }
         
         public abstract List<Claim> CreateClaims();
     }

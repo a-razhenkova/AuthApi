@@ -1,22 +1,15 @@
-﻿using Database.IdentityDb;
-using Database.IdentityDb.DefaultSchema;
+﻿using Database.IdentityDb.DefaultSchema;
 using Infrastructure;
-using Infrastructure.Configuration.AppSettings;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
 
 namespace Business
 {
     public class BasicAuthenticationService : IBasicAuthenticator
     {
-        private readonly AppSettingsOptions _appSettingsOptions;
-        private readonly IdentityDbContext _identityDbContext;
+        private readonly IClientAuthenticator _clientAuthenticator;
 
-        public BasicAuthenticationService(IOptionsSnapshot<AppSettingsOptions> appSettingsOptions,
-                                         IdentityDbContext identityDbContext)
+        public BasicAuthenticationService(IClientAuthenticator clientAuthenticator)
         {
-            _appSettingsOptions = appSettingsOptions.Value;
-            _identityDbContext = identityDbContext;
+            _clientAuthenticator = clientAuthenticator;
         }
 
         public async Task<Client> AuthenticateAsync(Authorization authorization)
@@ -32,53 +25,9 @@ namespace Business
             return await AuthenticateAsync(credentials.Key, credentials.Secret);
         }
 
-        public async Task<Client> AuthenticateAsync(string clientKey, string clientSecret)
+        public async Task<Client> AuthenticateAsync(string key, string secret)
         {
-            Client client = await _identityDbContext.Client
-                .Where(c => c.Key == clientKey)
-                .Include(c => c.Status)
-                .Include(c => c.Right)
-                .Include(c => c.Subscriptions.Where(s => s.Subscription.ExpirationDate >= DateTime.UtcNow.Date))
-                .SingleOrDefaultAsync() ?? throw new UnauthorizedException("Invalid credentials.");
-
-            if (!client.Status.IsAuthAllowed())
-                throw new ForbiddenException($"Client status is '{client.Status.Value}'.");
-
-            if (!client.IsInternal && !client.Subscriptions.Any())
-            {
-                client.Status.Value = ClientStatuses.Disabled;
-                client.Status.Reason = ClientStatusReasons.ExpiredSubscription;
-                await _identityDbContext.SaveChangesAsync();
-
-                throw new ForbiddenException("Client subscription has expired.");
-            }
-
-            bool isSecretValid = client.Secret == clientSecret;
-
-            AddLoginAttemptAsync(client, isSecretValid);
-
-            if (!isSecretValid)
-                throw new UnauthorizedException("Invalid credentials.");
-
-            return client;
-        }
-
-        private void AddLoginAttemptAsync(Client client, bool isSuccessful)
-        {
-            if (isSuccessful)
-            {
-                client.WrongLoginAttemptsCounter = 0;
-            }
-            else
-            {
-                client.WrongLoginAttemptsCounter++;
-
-                if (client.WrongLoginAttemptsCounter >= _appSettingsOptions.Security.DefaultMaxWrongLoginAttemptsBeforeBlock)
-                {
-                    client.Status.Value = ClientStatuses.Blocked;
-                    client.Status.Reason = ClientStatusReasons.MaxWrongLoginAttemptsReached;
-                }
-            }
+            return await _clientAuthenticator.AuthenticateAsync(key, secret);
         }
     }
 }
